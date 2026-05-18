@@ -1,8 +1,8 @@
-import "./dnd.ui.css";
+import LogicFlow from "@logicflow/core";
+import { ElCard, ElCollapse, ElCollapseItem } from "element-plus";
 import { computed, defineComponent, h } from "vue";
 import { useDndState } from "./dnd.state";
-import { ElCard, ElCollapse, ElCollapseItem } from "element-plus";
-import LogicFlow from "@logicflow/core";
+import "./dnd.ui.css";
 import { DndNodeMeta } from "./types";
 
 export function createDndPanel(lf: LogicFlow) {
@@ -15,9 +15,10 @@ export function createDndPanel(lf: LogicFlow) {
             // 分组后的节点
             const groups = computed(() => groupByGroup(state.nodes));
 
-            /** 默认展开所有分组 */
+            // 默认展开所有分组
             const activeNames = computed(() => groups.value.map(g => g.group));
 
+            // 开始拖拽
             function startDrag(node: any, e: MouseEvent) {
                 e.preventDefault();
                 if (!state.lf) return;
@@ -28,22 +29,56 @@ export function createDndPanel(lf: LogicFlow) {
                 });
             }
 
+            // 提取单个网格项的渲染逻辑
+            const renderGridItem = (node: any) => {
+                return h(
+                    "div",
+                    {
+                        key: node.type,
+                        class: "lf-dnd-grid-item",
+                        onMousedown: (e: MouseEvent) => startDrag(node, e)
+                    },
+                    [
+                        h(
+                            "div",
+                            { class: "lf-dnd-icon" },
+                            node.icon &&
+                                h("img", {
+                                    src: node.icon,
+                                    class: "lf-dnd-icon-img",
+                                    draggable: false
+                                })
+                        ),
+                        h("div", { class: "lf-dnd-label" }, node.label)
+                    ]
+                );
+            };
+
+            // 提取折叠面板每一项的渲染逻辑
+            const renderCollapseItem = (group: any) => {
+                return h(
+                    ElCollapseItem,
+                    {
+                        key: group.group,
+                        title: group.group,
+                        name: group.group
+                    },
+                    () => h("div", { class: "lf-dnd-grid" }, group.items.map(renderGridItem))
+                );
+            };
+
+            // 主渲染函数
             return () =>
                 h(
                     ElCard,
                     {
                         shadow: "never",
-                        style: {
-                            width: "100%",
-                            height: "100%",
-                            border: "none"
-                        },
+                        style: { width: "100%", height: "100%", border: "none" },
                         headerClass: "lf-dnd-header",
                         bodyClass: "lf-dnd-body"
                     },
                     {
                         header: () => h("span", { style: { fontWeight: 600 } }, "组件面板"),
-
                         default: () =>
                             h(
                                 ElCollapse,
@@ -51,45 +86,7 @@ export function createDndPanel(lf: LogicFlow) {
                                     modelValue: activeNames.value,
                                     class: "lf-dnd-collapse"
                                 },
-                                () =>
-                                    groups.value.map(group =>
-                                        h(
-                                            ElCollapseItem,
-                                            {
-                                                key: group.group,
-                                                title: group.group,
-                                                name: group.group
-                                            },
-                                            () =>
-                                                h(
-                                                    "div",
-                                                    { class: "lf-dnd-grid" },
-                                                    group.items.map(node =>
-                                                        h(
-                                                            "div",
-                                                            {
-                                                                key: node.type,
-                                                                class: "lf-dnd-grid-item",
-                                                                onMousedown: (e: MouseEvent) => startDrag(node, e)
-                                                            },
-                                                            [
-                                                                h(
-                                                                    "div",
-                                                                    { class: "lf-dnd-icon" },
-                                                                    node.icon &&
-                                                                        h("img", {
-                                                                            src: node.icon,
-                                                                            class: "lf-dnd-icon-img",
-                                                                            draggable: false
-                                                                        })
-                                                                ),
-                                                                h("div", { class: "lf-dnd-label" }, node.label)
-                                                            ]
-                                                        )
-                                                    )
-                                                )
-                                        )
-                                    )
+                                () => groups.value.map(renderCollapseItem)
                             )
                     }
                 );
@@ -97,6 +94,7 @@ export function createDndPanel(lf: LogicFlow) {
     });
 }
 
+// 根据 group 字段对节点进行分组
 function groupByGroup(items: DndNodeMeta[]) {
     const map = new Map<string, DndNodeMeta[]>();
 
