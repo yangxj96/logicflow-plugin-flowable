@@ -35,8 +35,8 @@ onMounted(() => {
         text: "导出",
         iconClass: "export",
         onClick: lf => {
-            // let xml = Flowable.toBpmnXml(lf);
-            // console.log(xml);
+            const xml = Flowable.toBpmnXml(lf);
+            console.log(xml);
         }
     });
 

@@ -82,6 +82,12 @@ export default class FlowablePlugin {
      */
     private bindEvents() {
         this.lf.on("graph:rendered", this.onGraphRendered);
+
+        // 连线被拒绝时的提示
+        this.lf.on("connection:not-allowed", ({ data, msg }) => {
+            const name = data?.text?.value ?? data?.text ?? data?.type ?? "节点";
+            console.warn(`[flowable] 连线到 "${name}" 被拒绝: ${msg}`);
+        });
     }
 
     /**

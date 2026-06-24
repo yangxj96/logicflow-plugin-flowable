@@ -1,56 +1,36 @@
 import { BaseSchema } from "../../base";
 import { Property } from "../../types";
+import { NODE_TYPE_NAMES, NODE_TYPES } from "../../../../core/constants";
 
 /**
- * 用户任务 Schema
+ * 服务任务 Schema
  */
-export const UserTaskSchema: Property[] = [
+export const ServiceTaskSchema: Property[] = [
     ...BaseSchema,
     {
-        field: "flowable:assignee",
-        label: "指定人",
+        field: "flowable:class",
+        label: "实现类",
         type: "inline",
         component: "string",
         default: ""
     },
     {
-        field: "flowable:candidateUsers",
-        label: "候选人",
+        field: "flowable:delegateExpression",
+        label: "委托表达式",
         type: "inline",
-        component: "string",
+        component: "expression",
         default: ""
     },
     {
-        field: "flowable:candidateGroups",
-        label: "候选组",
+        field: "flowable:expression",
+        label: "表达式",
         type: "inline",
-        component: "string",
+        component: "expression",
         default: ""
     },
     {
-        field: "flowable:formKey",
-        label: "表单Key",
-        type: "inline",
-        component: "string",
-        default: ""
-    },
-    {
-        field: "flowable:dueDate",
-        label: "到期日",
-        type: "inline",
-        component: "string",
-        default: ""
-    },
-    {
-        field: "flowable:priority",
-        label: "优先级",
-        type: "inline",
-        component: "string",
-        default: ""
-    },
-    {
-        field: "flowable:category",
-        label: "分类",
+        field: "flowable:resultVariable",
+        label: "结果变量",
         type: "inline",
         component: "string",
         default: ""

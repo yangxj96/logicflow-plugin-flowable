@@ -1,5 +1,5 @@
 import LogicFlow from "@logicflow/core";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { getProcessContext } from "../../features/context/process";
 import { ProcessModel } from "../../features/context/types";
 import { PropertyPanelState } from "./types";
@@ -21,12 +21,27 @@ export function usePropertyPanel(lf: LogicFlow): PropertyPanelState {
     // 当前线
     const currentEdge = ref<LogicFlow.EdgeData | undefined>(undefined);
 
+    /**
+     * 表单 key，用于在切换选中元素时强制重建表单
+     */
+    const formKey = computed(() => {
+        if (mode.value === "process") return "form-process";
+        if (mode.value === "node" && currentNode.value) {
+            return `form-node-${currentNode.value.id}`;
+        }
+        if (mode.value === "edge" && currentEdge.value) {
+            return `form-edge-${currentEdge.value.id}`;
+        }
+        return "form-empty";
+    });
+
     return {
         lf,
         mode,
         process,
         formRef,
         currentNode,
-        currentEdge
+        currentEdge,
+        formKey
     };
 }

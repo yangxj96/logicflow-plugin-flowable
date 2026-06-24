@@ -16,6 +16,7 @@
  */
 
 import FlowablePlugin from "./core";
+import { toBpmnXml } from "./features/export";
 
 /**
  * 基于 LogicFlow 的 BPMN 2.0 流程图可视化与建模插件，无缝对接 Flowable 工作流引擎。
@@ -24,10 +25,15 @@ import FlowablePlugin from "./core";
  * import Flowable from '@yangxj96/logicflow-flowable';
  * LogicFlow.use(Flowable.Plugin);
  *
+ * // 导出 BPMN XML
+ * const xml = Flowable.toBpmnXml(lf);
+ *
  * @property {object} Plugin - LogicFlow 插件本体，用于注册到 LogicFlow 实例
+ * @property {function} toBpmnXml - 导出为 Flowable 兼容的 BPMN 2.0 XML
  */
 const Flowable = {
-    Plugin: FlowablePlugin
+    Plugin: FlowablePlugin,
+    toBpmnXml
 };
 
 export default Flowable;

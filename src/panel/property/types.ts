@@ -1,6 +1,6 @@
 import type { LogicFlow } from "@logicflow/core";
 import { ProcessModel } from "../../features/context/types";
-import { App, Ref, VNode } from "vue";
+import { App, ComputedRef, Ref, VNode } from "vue";
 import { FormInstance } from "element-plus";
 
 /**
@@ -28,7 +28,7 @@ export interface PropertyPanelState {
      */
     process: Ref<ProcessModel>;
     /**
-     * 流程定义
+     * 表单实例
      */
     formRef: Ref<FormInstance | undefined>;
     /**
@@ -39,6 +39,10 @@ export interface PropertyPanelState {
      * 当前选中线
      */
     currentEdge: Ref<LogicFlow.EdgeData | undefined>;
+    /**
+     * 表单唯一 key，切换选中元素时变化以强制重建表单
+     */
+    formKey: ComputedRef<string>;
 }
 
 /**

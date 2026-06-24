@@ -4,7 +4,7 @@ import "./property.ui.css";
 import { usePropertyPanel } from "./property.state";
 import { registerPropertyEvents } from "./property.events";
 import { PropertyEventOptions } from "./types";
-import { renderProperty } from "./property.render";
+import { usePropertyRender } from "./property.render";
 
 /**
  * 注册属性面板
@@ -26,17 +26,10 @@ export function createPropertyPanel(lf: LogicFlow) {
                 state
             } as PropertyEventOptions);
 
-            return () => {
-                // switch (state.mode.value) {
-                //     case "process":
-                //         return renderProcessPanel(state);
-                //     case "node":
-                //         return renderNodesPanel(state);
-                //     case "edge":
-                //         return renderEdgesPanel(state);
-                // }
-                return renderProperty(state);
-            };
+            // 创建渲染上下文（computed 在 setup 中创建）
+            const { render } = usePropertyRender(state);
+
+            return render;
         }
     });
 }

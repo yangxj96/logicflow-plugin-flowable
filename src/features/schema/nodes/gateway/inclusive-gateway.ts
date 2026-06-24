@@ -2,20 +2,18 @@ import { BaseSchema } from "../../base";
 import { Property } from "../../types";
 
 /**
- * 开始事件 Schema
+ * 包容网关 Schema
+ *
+ * 包容网关用于条件可并行分支：
+ * - 至少 2 条出线
+ * - 所有出线必须配置条件
+ * - 不允许默认连线
  */
-export const StartEventSchema: Property[] = [
+export const InclusiveGatewaySchema: Property[] = [
     ...BaseSchema,
     {
-        field: "flowable:initiator",
-        label: "发起人",
-        type: "inline",
-        component: "string",
-        default: ""
-    },
-    {
-        field: "flowable:formKey",
-        label: "表单Key",
+        field: "default",
+        label: "默认路径",
         type: "inline",
         component: "string",
         default: ""

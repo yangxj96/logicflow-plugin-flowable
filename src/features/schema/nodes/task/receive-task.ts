@@ -2,13 +2,20 @@ import { BaseSchema } from "../../base";
 import { Property } from "../../types";
 
 /**
- * 结束事件 Schema
+ * 接收任务 Schema
  */
-export const EndEventSchema: Property[] = [
+export const ReceiveTaskSchema: Property[] = [
     ...BaseSchema,
     {
-        field: "terminateAll",
-        label: "终止全部",
+        field: "flowable:messageRef",
+        label: "消息引用",
+        type: "inline",
+        component: "string",
+        default: ""
+    },
+    {
+        field: "flowable:async",
+        label: "异步执行",
         type: "inline",
         component: "boolean",
         default: "false"

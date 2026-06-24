@@ -1,4 +1,5 @@
 import { h, RectNode } from "@logicflow/core";
+import { svgToDataUri } from "../../../core/constants";
 
 /**
  * 抽象的任务视图
@@ -51,7 +52,7 @@ export class TaskBaseView extends RectNode {
             // 头部图标
             icon &&
                 h("image", {
-                    href: icon,
+                    href: svgToDataUri(icon),
                     x: startX,
                     y: centerY - TaskBaseView.ICON_SIZE / 2,
                     width: TaskBaseView.ICON_SIZE,
@@ -73,7 +74,7 @@ export class TaskBaseView extends RectNode {
                 },
                 text.value
             ),
-            // 正文
+            // 正文（优先读取 form.name，其次 properties.name，最后用 text.value）
             h(
                 "text",
                 {
@@ -84,7 +85,7 @@ export class TaskBaseView extends RectNode {
                     fill: "#333",
                     fontSize: 14
                 },
-                `${properties.name ? properties.name : ""}`
+                properties?.form?.name || properties?.name || text.value || ""
             )
         ]);
     }

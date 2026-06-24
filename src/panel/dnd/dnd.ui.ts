@@ -30,26 +30,22 @@ export function createDndPanel(lf: LogicFlow) {
             }
 
             // 提取单个网格项的渲染逻辑
-            const renderGridItem = (node: any) => {
+            const renderGridItem = (node: any, groupName: string) => {
                 return h(
                     "div",
                     {
                         key: node.type,
                         class: "lf-dnd-grid-item",
+                        "data-group": groupName,
                         onMousedown: (e: MouseEvent) => startDrag(node, e)
                     },
                     [
-                        h(
-                            "div",
-                            { class: "lf-dnd-icon" },
-                            node.icon &&
-                                h("img", {
-                                    src: node.icon,
-                                    class: "lf-dnd-icon-img",
-                                    draggable: false
-                                })
-                        ),
-                        h("div", { class: "lf-dnd-label" }, node.label)
+                        // 内联 SVG 渲染（继承 CSS color，支持 currentColor）
+                        h("span", {
+                            class: "lf-dnd-icon",
+                            innerHTML: node.icon
+                        }),
+                        h("span", { class: "lf-dnd-label" }, node.label)
                     ]
                 );
             };
@@ -63,7 +59,12 @@ export function createDndPanel(lf: LogicFlow) {
                         title: group.group,
                         name: group.group
                     },
-                    () => h("div", { class: "lf-dnd-grid" }, group.items.map(renderGridItem))
+                    () =>
+                        h(
+                            "div",
+                            { class: "lf-dnd-grid" },
+                            group.items.map((item: DndNodeMeta) => renderGridItem(item, group.group))
+                        )
                 );
             };
 

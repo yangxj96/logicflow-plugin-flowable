@@ -76,73 +76,77 @@ export const NODE_TYPE_NAMES: Record<string, string> = {
 };
 
 /**
- * 节点图标
+ * 节点图标（内联 SVG 字符串，使用 currentColor 以便在不同上下文中自适应颜色）
+ *
+ * 图标设计遵循 BPMN 2.0 视觉约定：
+ * - 事件：圆形（开始=细线、结束=粗线）
+ * - 任务：圆角矩形（不同类型用内部图标区分）
+ * - 网关：菱形（排他=X、并行=+、包容=○）
  */
 export const NODE_ICONS = {
     /*--------------事件--------------*/
     START_EVENT:
-        'data:image/svg+xml;utf8,\
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">\
-<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/>\
-</svg>',
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">' +
+        '<circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5" />' +
+        "</svg>",
 
     END_EVENT:
-        'data:image/svg+xml;utf8,\
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">\
-<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="4"/>\
-</svg>',
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">' +
+        '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="4" />' +
+        "</svg>",
 
     /*--------------任务--------------*/
     RECEIVE_TASK:
-        'data:image/svg+xml;utf8,\
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">\
-<rect x="3" y="5" width="18" height="14" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"/>\
-<polyline points="3,7 12,13 21,7" fill="none" stroke="currentColor" stroke-width="2"/>\
-</svg>',
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">' +
+        '<rect x="3" y="4" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.5" />' +
+        '<polyline points="3,6 12,13 21,6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />' +
+        "</svg>",
 
     SCRIPT_TASK:
-        'data:image/svg+xml;utf8,\
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">\
-<rect x="4" y="3" width="16" height="18" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"/>\
-<line x1="8" y1="8" x2="16" y2="8" stroke="currentColor" stroke-width="2"/>\
-<line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" stroke-width="2"/>\
-</svg>',
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">' +
+        '<rect x="3" y="4" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.5" />' +
+        '<path d="M8 9h6M8 13h4M8 17h5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />' +
+        "</svg>",
 
     SERVICE_TASK:
-        'data:image/svg+xml;utf8,\
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">\
-<circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/>\
-<path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="currentColor" stroke-width="2"/>\
-</svg>',
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">' +
+        '<rect x="3" y="4" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.5" />' +
+        '<circle cx="12" cy="10" r="2" fill="none" stroke="currentColor" stroke-width="1.5" />' +
+        '<path d="M12 6v1M12 17v1M6 12h1M17 12h1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />' +
+        "</svg>",
 
     USER_TASK:
-        'data:image/svg+xml;utf8,\
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">\
-<circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/>\
-<path d="M4 21c0-4 16-4 16 0" fill="none" stroke="currentColor" stroke-width="2"/>\
-</svg>',
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">' +
+        '<rect x="3" y="4" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.5" />' +
+        '<circle cx="12" cy="9.5" r="3" fill="none" stroke="currentColor" stroke-width="1.5" />' +
+        '<path d="M6.5 19c0-3 11-3 11 0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />' +
+        "</svg>",
 
     /*--------------网关--------------*/
     EXCLUSIVE_GATEWAY:
-        'data:image/svg+xml;utf8,\
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">\
-<polygon points="12,3 21,12 12,21 3,12" fill="none" stroke="currentColor" stroke-width="2"/>\
-<line x1="8" y1="8" x2="16" y2="16" stroke="currentColor" stroke-width="2"/>\
-<line x1="16" y1="8" x2="8" y2="16" stroke="currentColor" stroke-width="2"/>\
-</svg>',
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">' +
+        '<polygon points="12,2 22,12 12,22 2,12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />' +
+        '<line x1="8" y1="8" x2="16" y2="16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />' +
+        '<line x1="16" y1="8" x2="8" y2="16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />' +
+        "</svg>",
 
     INCLUSIVE_GATEWAY:
-        'data:image/svg+xml;utf8,\
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">\
-<polygon points="12,3 21,12 12,21 3,12" fill="none" stroke="currentColor" stroke-width="2"/>\
-<circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/>\
-</svg>',
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">' +
+        '<polygon points="12,2 22,12 12,22 2,12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />' +
+        '<circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5" />' +
+        "</svg>",
 
     PARALLEL_GATEWAY:
-        'data:image/svg+xml;utf8,\
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">\
-<polygon points="12,3 21,12 12,21 3,12" fill="none" stroke="currentColor" stroke-width="2"/>\
-<line x1="12" y1="7" x2="12" y2="17" stroke="currentColor" stroke-width="2"/>\
-<line x1="7" y1="12" x2="17" y2="12" stroke="currentColor" stroke-width="2"/>\
-</svg>'
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">' +
+        '<polygon points="12,2 22,12 12,22 2,12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />' +
+        '<line x1="12" y1="6" x2="12" y2="18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />' +
+        '<line x1="6" y1="12" x2="18" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />' +
+        "</svg>"
 } as const;
+
+/**
+ * 将内联 SVG 字符串转换为 data URI（用于 SVG &lt;image&gt; 元素的 href）
+ */
+export function svgToDataUri(svg: string): string {
+    return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+}

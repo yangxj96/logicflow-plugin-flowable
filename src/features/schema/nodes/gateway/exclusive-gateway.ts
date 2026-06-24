@@ -2,20 +2,18 @@ import { BaseSchema } from "../../base";
 import { Property } from "../../types";
 
 /**
- * 开始事件 Schema
+ * 排他网关 Schema
+ *
+ * 排他网关用于条件互斥分支：
+ * - 至少 2 条出线
+ * - 每条非默认出线必须配置条件
+ * - 必须且只能存在一条默认出线
  */
-export const StartEventSchema: Property[] = [
+export const ExclusiveGatewaySchema: Property[] = [
     ...BaseSchema,
     {
-        field: "flowable:initiator",
-        label: "发起人",
-        type: "inline",
-        component: "string",
-        default: ""
-    },
-    {
-        field: "flowable:formKey",
-        label: "表单Key",
+        field: "default",
+        label: "默认路径",
         type: "inline",
         component: "string",
         default: ""
