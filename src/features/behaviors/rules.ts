@@ -57,7 +57,7 @@ export function createSourceRules(behavior: NodeBehavior): ConnectRule[] {
             if (!source || !target) return true;
             const graphModel = source.graphModel;
             const edges = graphModel.getNodeEdges(source.id);
-            return !edges.some(e => e.sourceNodeId === source.id && e.targetNodeId === target.id);
+            return !edges.some((e: any) => e.sourceNodeId === source.id && e.targetNodeId === target.id);
         }
     });
 
@@ -125,7 +125,7 @@ function countOutgoing(node: BaseNodeModel): number {
     const graphModel = node.graphModel;
     if (!graphModel) return 0;
     const edges = graphModel.getNodeEdges(node.id);
-    return edges.filter(e => e.sourceNodeId === node.id).length;
+    return edges.filter((e: any) => e.sourceNodeId === node.id).length;
 }
 
 /**
@@ -135,5 +135,5 @@ function countIncoming(node: BaseNodeModel): number {
     const graphModel = node.graphModel;
     if (!graphModel) return 0;
     const edges = graphModel.getNodeEdges(node.id);
-    return edges.filter(e => e.targetNodeId === node.id).length;
+    return edges.filter((e: any) => e.targetNodeId === node.id).length;
 }
