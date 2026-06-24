@@ -1,4 +1,5 @@
-import type LogicFlow from "@logicflow/core";
+import LogicFlowCore from "@logicflow/core";
+import { DynamicGroup } from "@logicflow/extension";
 import { NODE_TYPES, PLUGIN_NAME } from "./constants";
 import { registerContextMenu } from "../features/context-menu";
 import { FlowablePluginOptions } from "./types";
@@ -19,7 +20,7 @@ export default class FlowablePlugin {
     /**
      * 插件实例
      */
-    lf: LogicFlow;
+    lf: LogicFlowCore;
 
     /**
      * 插件配置
@@ -31,7 +32,7 @@ export default class FlowablePlugin {
      * @param lf
      * @param options
      */
-    constructor({ lf, options }: { lf: LogicFlow; options: FlowablePluginOptions }) {
+    constructor({ lf, options }: { lf: LogicFlowCore; options: FlowablePluginOptions }) {
         this.lf = lf;
         this.options = this.mergeOptions(options);
         this.init();
@@ -63,11 +64,25 @@ export default class FlowablePlugin {
         initElements(this.lf);
     }
 
+    private dynamicGroupInstance?: DynamicGroup;
+
     /**
      * 注册插件能力
      */
     private initPlugins() {
         registerContextMenu(this.lf);
+
+        // 初始化 DynamicGroup 扩展（子流程容器支持）
+        try {
+            this.dynamicGroupInstance = new DynamicGroup({
+                lf: this.lf,
+                LogicFlow: LogicFlowCore,
+                options: {}
+            });
+            this.dynamicGroupInstance.init();
+        } catch {
+            // DynamicGroup 可能未安装
+        }
     }
 
     /**
@@ -75,6 +90,12 @@ export default class FlowablePlugin {
      */
     private initDefaultConfig() {
         this.lf.setDefaultEdgeType(NODE_TYPES.SEQUENCE_FLOW);
+
+        // 启用节点缩放（子流程等容器节点需要缩放手柄）
+        const graphModel = (this.lf as any).graphModel;
+        if (graphModel?.editConfigModel) {
+            graphModel.editConfigModel.allowResize = true;
+        }
     }
 
     /**

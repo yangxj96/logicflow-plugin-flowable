@@ -35,6 +35,12 @@ export const NODE_TYPES = {
     START_EVENT: bpmn("startEvent"),
     // 结束事件
     END_EVENT: bpmn("endEvent"),
+    // 中间捕获事件
+    INTERMEDIATE_CATCH_EVENT: bpmn("intermediateCatchEvent"),
+    // 中间抛出事件
+    INTERMEDIATE_THROW_EVENT: bpmn("intermediateThrowEvent"),
+    // 边界事件
+    BOUNDARY_EVENT: bpmn("boundaryEvent"),
 
     /*--------------网关--------------*/
     // 排他网关
@@ -43,6 +49,14 @@ export const NODE_TYPES = {
     INCLUSIVE_GATEWAY: bpmn("inclusiveGateway"),
     // 并行网关
     PARALLEL_GATEWAY: bpmn("parallelGateway"),
+
+    /*--------------子流程与调用--------------*/
+    // 嵌入式子流程
+    SUB_PROCESS: bpmn("subProcess"),
+    // 展开子流程
+    EXPANDED_SUB_PROCESS: bpmn("expandedSubProcess"),
+    // 调用活动
+    CALL_ACTIVITY: bpmn("callActivity"),
 
     /*--------------特殊处理--------------*/
     // 流程定义
@@ -65,11 +79,19 @@ export const NODE_TYPE_NAMES: Record<string, string> = {
     /*--------------事件--------------*/
     [NODE_TYPES.START_EVENT]: "开始事件",
     [NODE_TYPES.END_EVENT]: "结束事件",
+    [NODE_TYPES.INTERMEDIATE_CATCH_EVENT]: "中间捕获事件",
+    [NODE_TYPES.INTERMEDIATE_THROW_EVENT]: "中间抛出事件",
+    [NODE_TYPES.BOUNDARY_EVENT]: "边界事件",
 
     /*--------------网关--------------*/
     [NODE_TYPES.EXCLUSIVE_GATEWAY]: "排他网关",
     [NODE_TYPES.INCLUSIVE_GATEWAY]: "包容网关",
     [NODE_TYPES.PARALLEL_GATEWAY]: "并行网关",
+
+    /*--------------子流程与调用--------------*/
+    [NODE_TYPES.SUB_PROCESS]: "嵌入式子流程",
+    [NODE_TYPES.EXPANDED_SUB_PROCESS]: "展开子流程",
+    [NODE_TYPES.CALL_ACTIVITY]: "调用活动",
 
     /*--------------特殊--------------*/
     [NODE_TYPES.PROCESS]: "流程"
@@ -93,6 +115,24 @@ export const NODE_ICONS = {
     END_EVENT:
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">' +
         '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="4" />' +
+        "</svg>",
+
+    INTERMEDIATE_CATCH_EVENT:
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">' +
+        '<circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5" />' +
+        '<circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="1.5" />' +
+        "</svg>",
+
+    INTERMEDIATE_THROW_EVENT:
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">' +
+        '<circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5" />' +
+        '<circle cx="12" cy="12" r="7" fill="currentColor" stroke="currentColor" stroke-width="1.5" />' +
+        "</svg>",
+
+    BOUNDARY_EVENT:
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">' +
+        '<circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3,2" />' +
+        '<circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="1.5" />' +
         "</svg>",
 
     /*--------------任务--------------*/
@@ -141,6 +181,27 @@ export const NODE_ICONS = {
         '<polygon points="12,2 22,12 12,22 2,12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />' +
         '<line x1="12" y1="6" x2="12" y2="18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />' +
         '<line x1="6" y1="12" x2="18" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />' +
+        "</svg>",
+
+    /*--------------子流程与调用--------------*/
+    SUB_PROCESS:
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">' +
+        '<rect x="3" y="4" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.5" />' +
+        '<line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />' +
+        '<line x1="12" y1="8" x2="12" y2="16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />' +
+        "</svg>",
+
+    EXPANDED_SUB_PROCESS:
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">' +
+        '<rect x="2" y="3" width="20" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4,2" />' +
+        '<line x1="7" y1="12" x2="17" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />' +
+        '<line x1="12" y1="7" x2="12" y2="17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />' +
+        "</svg>",
+
+    CALL_ACTIVITY:
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">' +
+        '<rect x="3" y="4" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="3" />' +
+        '<polyline points="8,14 11,11 14,16 16,8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />' +
         "</svg>"
 } as const;
 

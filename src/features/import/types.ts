@@ -4,6 +4,11 @@
 export const XML_TAG_TO_TYPE: Record<string, string> = {
     startEvent: "bpmn:startEvent",
     endEvent: "bpmn:endEvent",
+    intermediateCatchEvent: "bpmn:intermediateCatchEvent",
+    intermediateThrowEvent: "bpmn:intermediateThrowEvent",
+    boundaryEvent: "bpmn:boundaryEvent",
+    subProcess: "bpmn:subProcess",
+    callActivity: "bpmn:callActivity",
     userTask: "bpmn:userTask",
     serviceTask: "bpmn:serviceTask",
     scriptTask: "bpmn:scriptTask",

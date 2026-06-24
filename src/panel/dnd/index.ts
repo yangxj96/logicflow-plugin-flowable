@@ -44,6 +44,42 @@ export const DND_ITEMS = [
         group: "事件"
     },
     {
+        type: NODE_TYPES.INTERMEDIATE_CATCH_EVENT,
+        label: "中间捕获",
+        icon: NODE_ICONS.INTERMEDIATE_CATCH_EVENT,
+        group: "事件"
+    },
+    {
+        type: NODE_TYPES.INTERMEDIATE_THROW_EVENT,
+        label: "中间抛出",
+        icon: NODE_ICONS.INTERMEDIATE_THROW_EVENT,
+        group: "事件"
+    },
+    {
+        type: NODE_TYPES.BOUNDARY_EVENT,
+        label: "边界",
+        icon: NODE_ICONS.BOUNDARY_EVENT,
+        group: "事件"
+    },
+    {
+        type: NODE_TYPES.SUB_PROCESS,
+        label: "嵌入式子流程",
+        icon: NODE_ICONS.SUB_PROCESS,
+        group: "子流程"
+    },
+    {
+        type: NODE_TYPES.EXPANDED_SUB_PROCESS,
+        label: "展开子流程",
+        icon: NODE_ICONS.EXPANDED_SUB_PROCESS,
+        group: "子流程"
+    },
+    {
+        type: NODE_TYPES.CALL_ACTIVITY,
+        label: "调用活动",
+        icon: NODE_ICONS.CALL_ACTIVITY,
+        group: "子流程"
+    },
+    {
         type: NODE_TYPES.EXCLUSIVE_GATEWAY,
         label: "排他网关",
         icon: NODE_ICONS.EXCLUSIVE_GATEWAY,

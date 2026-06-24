@@ -3,47 +3,32 @@ import { NODE_TYPES } from "../../../../core/constants";
 import { createConnectRules, getNodeBehavior } from "../../../../features/behaviors";
 
 /**
- * 结束事件节点模型
+ * 中间捕获事件节点模型
  *
- * BPMN 规则：
- * - 不允许有出线
- * - 允许有入线
+ * BPMN 规则：可连入连出（等待触发器）
  */
-export class EndEventModel extends CircleNodeModel {
-    static readonly type = NODE_TYPES.END_EVENT;
+export class IntermediateCatchEventModel extends CircleNodeModel {
+    static readonly type = NODE_TYPES.INTERMEDIATE_CATCH_EVENT;
 
     constructor(data: any, graphModel: any) {
         super(data, graphModel);
         this.r = 26;
         this.resizable = false;
-
-        // 结束事件：只进不出
         this.isAllowIncoming = true;
-        this.isAllowOutgoing = false;
+        this.isAllowOutgoing = true;
 
-        // 直接在实例上设置连接规则（避免 LogicFlow 缓存绕过）
         this.applyConnectRules();
     }
 
     initNodeData(data: LogicFlow.NodeConfig) {
         super.initNodeData(data);
+
+        if ((data.properties as any)?.form) return;
     }
 
-    getNodeStyle() {
-        return {
-            stroke: "#333",
-            strokeWidth: 2,
-            fill: "#fff"
-        };
-    }
-
-    /**
-     * 应用 BPMN 行为规则到实例的 sourceRules / targetRules
-     */
     private applyConnectRules(): void {
         const behavior = getNodeBehavior(this.type);
         if (!behavior) return;
-
         const { sourceRules, targetRules } = createConnectRules(behavior);
         this.sourceRules = sourceRules;
         this.targetRules = targetRules;

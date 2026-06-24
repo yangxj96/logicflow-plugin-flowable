@@ -7,6 +7,9 @@ export { ProcessSchema } from "./process";
 // 事件
 export { StartEventSchema } from "./nodes/event/start-event";
 export { EndEventSchema } from "./nodes/event/end-event";
+export { IntermediateCatchEventSchema } from "./nodes/event/intermediate-catch-event";
+export { IntermediateThrowEventSchema } from "./nodes/event/intermediate-throw-event";
+export { BoundaryEventSchema } from "./nodes/event/boundary-event";
 
 // 任务
 export { UserTaskSchema } from "./nodes/task/user-task";
@@ -19,12 +22,20 @@ export { ExclusiveGatewaySchema } from "./nodes/gateway/exclusive-gateway";
 export { ParallelGatewaySchema } from "./nodes/gateway/parallel-gateway";
 export { InclusiveGatewaySchema } from "./nodes/gateway/inclusive-gateway";
 
+// 子流程与调用
+export { SubProcessSchema } from "./nodes/subprocess/sub-process";
+export { ExpandedSubProcessSchema } from "./nodes/subprocess/expanded-sub-process";
+export { CallActivitySchema } from "./nodes/subprocess/call-activity";
+
 // 连线
 export { SequenceFlowSchema } from "./edges/sequence-flow";
 
 // 静态导入用于注册表
 import { StartEventSchema } from "./nodes/event/start-event";
 import { EndEventSchema } from "./nodes/event/end-event";
+import { IntermediateCatchEventSchema } from "./nodes/event/intermediate-catch-event";
+import { IntermediateThrowEventSchema } from "./nodes/event/intermediate-throw-event";
+import { BoundaryEventSchema } from "./nodes/event/boundary-event";
 import { UserTaskSchema } from "./nodes/task/user-task";
 import { ServiceTaskSchema } from "./nodes/task/service-task";
 import { ScriptTaskSchema } from "./nodes/task/script-task";
@@ -32,6 +43,9 @@ import { ReceiveTaskSchema } from "./nodes/task/receive-task";
 import { ExclusiveGatewaySchema } from "./nodes/gateway/exclusive-gateway";
 import { ParallelGatewaySchema } from "./nodes/gateway/parallel-gateway";
 import { InclusiveGatewaySchema } from "./nodes/gateway/inclusive-gateway";
+import { SubProcessSchema } from "./nodes/subprocess/sub-process";
+import { ExpandedSubProcessSchema } from "./nodes/subprocess/expanded-sub-process";
+import { CallActivitySchema } from "./nodes/subprocess/call-activity";
 import { SequenceFlowSchema } from "./edges/sequence-flow";
 
 /**
@@ -41,6 +55,9 @@ const schemaRegistry: Record<string, Property[]> = {
     // 事件
     [NODE_TYPES.START_EVENT]: StartEventSchema,
     [NODE_TYPES.END_EVENT]: EndEventSchema,
+    [NODE_TYPES.INTERMEDIATE_CATCH_EVENT]: IntermediateCatchEventSchema,
+    [NODE_TYPES.INTERMEDIATE_THROW_EVENT]: IntermediateThrowEventSchema,
+    [NODE_TYPES.BOUNDARY_EVENT]: BoundaryEventSchema,
 
     // 任务
     [NODE_TYPES.USER_TASK]: UserTaskSchema,
@@ -52,6 +69,11 @@ const schemaRegistry: Record<string, Property[]> = {
     [NODE_TYPES.EXCLUSIVE_GATEWAY]: ExclusiveGatewaySchema,
     [NODE_TYPES.PARALLEL_GATEWAY]: ParallelGatewaySchema,
     [NODE_TYPES.INCLUSIVE_GATEWAY]: InclusiveGatewaySchema,
+
+    // 子流程与调用
+    [NODE_TYPES.SUB_PROCESS]: SubProcessSchema,
+    [NODE_TYPES.EXPANDED_SUB_PROCESS]: ExpandedSubProcessSchema,
+    [NODE_TYPES.CALL_ACTIVITY]: CallActivitySchema,
 
     // 连线
     [NODE_TYPES.SEQUENCE_FLOW]: SequenceFlowSchema

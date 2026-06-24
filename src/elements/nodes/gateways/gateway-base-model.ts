@@ -8,6 +8,7 @@ export class GatewayBaseModel extends DiamondNodeModel {
     constructor(data: any, graphModel: any) {
         super(data, graphModel);
 
+        this.resizable = false;
         // 网关允许连入和连出
         this.isAllowIncoming = true;
         this.isAllowOutgoing = true;

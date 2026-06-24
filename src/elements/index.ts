@@ -3,6 +3,7 @@ import { registerEventNodes } from "./nodes/events";
 import { registerTaskNodes } from "./nodes/tasks";
 import { registerSequenceEdges } from "./edges/sequence";
 import { registerGatewayNodes } from "./nodes/gateways";
+import { registerSubProcessNodes } from "./nodes/subprocess";
 
 /**
  * 初始化加载节点信息
@@ -14,4 +15,5 @@ export function initElements(lf: LogicFlow) {
     registerTaskNodes(lf);
     registerSequenceEdges(lf);
     registerGatewayNodes(lf);
+    registerSubProcessNodes(lf);
 }

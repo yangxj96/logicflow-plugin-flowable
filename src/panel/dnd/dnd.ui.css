@@ -97,6 +97,10 @@
     color: #1976d2; /* 蓝色 - 任务 */
 }
 
+.lf-dnd-grid-item[data-group="子流程"] .lf-dnd-icon {
+    color: #7c4dff; /* 紫色 - 子流程 */
+}
+
 /* label */
 .lf-dnd-label {
     font-size: 12px;

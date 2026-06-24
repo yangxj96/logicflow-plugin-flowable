@@ -31,6 +31,68 @@ export const NODE_BEHAVIORS: Record<string, NodeBehavior> = {
         maxIn: 99
     },
 
+    [NODE_TYPES.INTERMEDIATE_CATCH_EVENT]: {
+        type: "中间捕获事件",
+        allowOut: true,
+        allowIn: true,
+        minOut: 1,
+        maxOut: 99,
+        minIn: 1,
+        maxIn: 99
+    },
+
+    [NODE_TYPES.INTERMEDIATE_THROW_EVENT]: {
+        type: "中间抛出事件",
+        allowOut: true,
+        allowIn: true,
+        minOut: 1,
+        maxOut: 99,
+        minIn: 1,
+        maxIn: 99
+    },
+
+    [NODE_TYPES.BOUNDARY_EVENT]: {
+        type: "边界事件",
+        allowOut: true,
+        allowIn: false,
+        minOut: 1,
+        maxOut: 99,
+        minIn: 0,
+        maxIn: 0
+    },
+
+    /* ========== 子流程与调用 ========== */
+
+    [NODE_TYPES.SUB_PROCESS]: {
+        type: "嵌入式子流程",
+        allowOut: true,
+        allowIn: true,
+        minOut: 1,
+        maxOut: 99,
+        minIn: 1,
+        maxIn: 99
+    },
+
+    [NODE_TYPES.EXPANDED_SUB_PROCESS]: {
+        type: "展开子流程",
+        allowOut: true,
+        allowIn: true,
+        minOut: 1,
+        maxOut: 99,
+        minIn: 1,
+        maxIn: 99
+    },
+
+    [NODE_TYPES.CALL_ACTIVITY]: {
+        type: "调用活动",
+        allowOut: true,
+        allowIn: true,
+        minOut: 1,
+        maxOut: 1,
+        minIn: 1,
+        maxIn: 99
+    },
+
     /* ========== 任务 ========== */
 
     [NODE_TYPES.USER_TASK]: {

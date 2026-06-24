@@ -22,8 +22,9 @@ export class StartEventModel extends CircleNodeModel implements PropertyMethod {
     constructor(data: any, graphModel: any) {
         super(data, graphModel);
         this.r = 26;
+        this.resizable = false;
 
-        // 开始事件：只出不进（锚点层面阻止入线）
+        // 开始事件：只出不进
         this.isAllowIncoming = false;
         this.isAllowOutgoing = true;
 

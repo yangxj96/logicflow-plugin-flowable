@@ -9,6 +9,12 @@
 export const BPMN_ELEMENT_TAGS: Record<string, string> = {
     "bpmn:startEvent": "startEvent",
     "bpmn:endEvent": "endEvent",
+    "bpmn:intermediateCatchEvent": "intermediateCatchEvent",
+    "bpmn:intermediateThrowEvent": "intermediateThrowEvent",
+    "bpmn:boundaryEvent": "boundaryEvent",
+    "bpmn:subProcess": "subProcess",
+    "bpmn:expandedSubProcess": "expandedSubProcess",
+    "bpmn:callActivity": "callActivity",
     "bpmn:userTask": "userTask",
     "bpmn:serviceTask": "serviceTask",
     "bpmn:scriptTask": "scriptTask",
