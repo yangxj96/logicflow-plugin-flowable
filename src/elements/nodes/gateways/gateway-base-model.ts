@@ -1,5 +1,4 @@
 import { DiamondNodeModel } from "@logicflow/core";
-import type { ConnectRule } from "@logicflow/core";
 import { createConnectRules, getNodeBehavior } from "../../../features/behaviors";
 
 /**

@@ -2,7 +2,7 @@ import { computed, h, VNode } from "vue";
 import { ElCard, ElForm, ElFormItem, ElInput, ElInputNumber, ElSelect, ElOption, ElSwitch } from "element-plus";
 import { NODE_TYPE_NAMES } from "../../core/constants";
 import { getSchemaByType } from "../../features/schema";
-import { ProcessSchema } from "../../features/schema/process";
+import { ProcessSchema } from "../../features/schema";
 import { Property, PropertyComponent } from "../../features/schema/types";
 import { PropertyPanelState } from "./types";
 
@@ -206,7 +206,7 @@ function renderControl(
         case "boolean":
             return h(ElSwitch, {
                 modelValue: toBoolean(model[field]),
-                "onUpdate:modelValue": (val: boolean) => {
+                "onUpdate:modelValue": (val: string | number | boolean) => {
                     model[field] = String(val);
                 }
             });

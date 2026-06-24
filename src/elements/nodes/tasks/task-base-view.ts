@@ -85,7 +85,7 @@ export class TaskBaseView extends RectNode {
                     fill: "#333",
                     fontSize: 14
                 },
-                properties?.form?.name || properties?.name || text.value || ""
+                (properties as any)?.form?.name || (properties as any)?.name || text.value || ""
             )
         ]);
     }

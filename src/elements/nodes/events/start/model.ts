@@ -1,5 +1,4 @@
 import LogicFlow, { CircleNodeModel } from "@logicflow/core";
-import type { ConnectRule } from "@logicflow/core";
 import { NODE_TYPE_NAMES, NODE_TYPES } from "../../../../core/constants";
 import { Property, PropertyMethod } from "../../../../features/schema/types";
 import { StartEventSchema } from "../../../../features/schema/nodes/event/start-event";

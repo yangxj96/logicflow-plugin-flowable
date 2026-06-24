@@ -1,5 +1,4 @@
 import LogicFlow, { CircleNodeModel } from "@logicflow/core";
-import type { ConnectRule } from "@logicflow/core";
 import { NODE_TYPES } from "../../../../core/constants";
 import { createConnectRules, getNodeBehavior } from "../../../../features/behaviors";
 
