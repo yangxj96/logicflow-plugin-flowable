@@ -1,16 +1,14 @@
 {
-  "compilerOptions": {
-    "target": "ES2020",
-    "module": "ESNext",
-    "declaration": true,
-    "strict": true,
-    "moduleResolution": "Bundler",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": "@logicflow/core"
-  },
-  "include": [
-    "src"
-  ]
+    "compilerOptions": {
+        "target": "ES2020",
+        "module": "ESNext",
+        "declaration": true,
+        "strict": true,
+        "moduleResolution": "Bundler",
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "jsx": "react-jsx",
+        "jsxImportSource": "@logicflow/core"
+    },
+    "include": ["src"]
 }

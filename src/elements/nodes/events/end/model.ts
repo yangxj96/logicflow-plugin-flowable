@@ -1,62 +1,32 @@
 import LogicFlow, { CircleNodeModel } from "@logicflow/core";
-import { NodeBehavior, NodeCap, PropertyBase } from "../../../../types";
+import type { ConnectRule } from "@logicflow/core";
 import { NODE_TYPES } from "../../../../core/constants";
-import { EndEventBehavior } from "../../../../features/behaviors/nodes/events/end-event";
-import { BpmnIdGenerator } from "../../../../utils/id-generator";
-import { EndEventProperties } from "../../../../features/properties/events/end";
-
+import { createConnectRules, getNodeBehavior } from "../../../../features/behaviors";
 
 /**
  * 结束事件节点模型
+ *
+ * BPMN 规则：
+ * - 不允许有出线
+ * - 允许有入线
  */
-export class EndEventModel extends CircleNodeModel implements NodeCap {
+export class EndEventModel extends CircleNodeModel {
     static readonly type = NODE_TYPES.END_EVENT;
-
-    getNodeProperties(): PropertyBase[] {
-        return EndEventProperties;
-    }
-
-    getBehavior(): NodeBehavior {
-        return EndEventBehavior;
-    }
-
 
     constructor(data: any, graphModel: any) {
         super(data, graphModel);
-
-        //  固定大小
         this.r = 26;
 
-        // 语义约束
+        // 结束事件：只进不出（锚点层面阻止出线）
         this.isAllowIncoming = true;
         this.isAllowOutgoing = false;
+
+        // 直接在实例上设置连接规则（避免 LogicFlow 缓存绕过）
+        this.applyConnectRules();
     }
 
     initNodeData(data: LogicFlow.NodeConfig) {
         super.initNodeData(data);
-
-        let bpmnId = BpmnIdGenerator.generate();
-        this.id = bpmnId;
-        this.text.value = "结束";
-
-        // 初始化 properties（非常关键）
-        this.properties = {};
-        this.getNodeProperties().forEach(prop => {
-            this.properties[prop.key] = "";
-            if (prop.key === "id") {
-                this.properties[prop.key] = bpmnId;
-            }
-            if (prop.key === "name") {
-                this.properties[prop.key] = "结束";
-            }
-        });
-
-        // 默认文本
-        if (!this.text?.value) {
-            this.text.value = "结束";
-            this.text.x = this.x;
-            this.text.y = this.y + 4;
-        }
     }
 
     getNodeStyle() {
@@ -65,5 +35,17 @@ export class EndEventModel extends CircleNodeModel implements NodeCap {
             strokeWidth: 2,
             fill: "#fff"
         };
+    }
+
+    /**
+     * 应用 BPMN 行为规则到实例的 sourceRules / targetRules
+     */
+    private applyConnectRules(): void {
+        const behavior = getNodeBehavior(this.type);
+        if (!behavior) return;
+
+        const { sourceRules, targetRules } = createConnectRules(behavior);
+        this.sourceRules = sourceRules;
+        this.targetRules = targetRules;
     }
 }

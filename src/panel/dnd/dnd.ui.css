@@ -1,0 +1,106 @@
+/* DND面板卡片头部样式 */
+.lf-dnd-header {
+    border-bottom: 0 !important;
+}
+
+/* DND面板卡片BODY样式 */
+.lf-dnd-body {
+    padding: 0 !important;
+}
+
+/* Collapse 占满容器 */
+.lf-dnd-collapse {
+    width: 96%;
+    height: 99%;
+}
+
+/* 隐藏箭头 */
+.lf-dnd-collapse .el-collapse-item__arrow {
+    display: none;
+}
+
+/* 添加内边距,视觉上舒服点 */
+.lf-dnd-collapse .el-collapse-item__title,
+.lf-dnd-collapse .el-collapse-item__content {
+    padding: 8px 10px 12px;
+    box-sizing: border-box;
+}
+
+/* Grid：每行 3 个 */
+.lf-dnd-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 8px 4px;
+}
+
+/* 单个 item */
+.lf-dnd-grid-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    padding: 10px 6px;
+    border-radius: 6px;
+    cursor: grab;
+    user-select: none;
+
+    background: var(--el-fill-color-blank);
+    border: 1px solid var(--el-border-color-light);
+
+    transition: all 0.15s ease;
+}
+
+.lf-dnd-grid-item:hover {
+    background: var(--el-color-primary-light-9);
+    border-color: var(--el-color-primary);
+    transform: translateY(-1px);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.lf-dnd-grid-item:active {
+    cursor: grabbing;
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+/* icon 容器 */
+.lf-dnd-icon {
+    width: 28px;
+    height: 28px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* 内联 SVG 继承此颜色，通过 currentColor 渲染 */
+    color: var(--el-text-color-secondary);
+}
+
+.lf-dnd-icon svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* 按 BPMN 类别设置图标颜色 */
+.lf-dnd-grid-item[data-group="事件"] .lf-dnd-icon {
+    color: #4caf50; /* 绿色 - 事件 */
+}
+
+.lf-dnd-grid-item[data-group="网关"] .lf-dnd-icon {
+    color: #ff9800; /* 橙色 - 网关 */
+}
+
+.lf-dnd-grid-item[data-group="任务"] .lf-dnd-icon {
+    color: #1976d2; /* 蓝色 - 任务 */
+}
+
+/* label */
+.lf-dnd-label {
+    font-size: 12px;
+    color: var(--el-text-color-regular);
+    text-align: center;
+    line-height: 1.3;
+}

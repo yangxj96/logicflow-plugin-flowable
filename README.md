@@ -3,15 +3,12 @@
 > 基于 [LogicFlow](https://logicflow.org) 的 **BPMN 2.0 流程图建模插件**，无缝对接 [Flowable](https://www.flowable.org) 工作流引擎。  
 > 用 LogicFlow 画流程图，一键导出 Flowable 可直接部署的 BPMN XML！
 
-<p align="center">
 
 [![npm version](https://img.shields.io/npm/v/@yangxj96/logicflow-flowable?color=blue)](https://www.npmjs.com/package/@yangxj96/logicflow-flowable)
 [![npm downloads](https://img.shields.io/npm/dm/@yangxj96/logicflow-flowable)](https://www.npmjs.com/package/@yangxj96/logicflow-flowable)
 [![bundle size](https://badgen.net/bundlephobia/minzip/@yangxj96/logicflow-flowable)](https://bundlephobia.com/package/@yangxj96/logicflow-flowable)
 [![License](https://img.shields.io/github/license/yangxj96/logicflow-flowable)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/yangxj96/logicflow-flowable?style=social)](https://github.com/yangxj96/logicflow-flowable)
-
-</p>
 
 _▲ 支持拖拽节点、属性配置、BPMN XML 导出_
 
@@ -70,56 +67,56 @@ npm run dev
 
 #### 事件（Events）
 
-| BPMN 元素               | 状态 | LogicFlow 节点类型            |
-| ----------------------- | ---- | ----------------------------- |
-| 开始事件                | ✅   | `bpmn:startEvent`             |
-| 结束事件                | ✅   | `bpmn:endEvent`               |
-| 中间事件（捕获）        | ✅   | `bpmn:intermediateCatchEvent` |
-| 中间事件（抛出）        | ✅   | `bpmn:intermediateThrowEvent` |
-| 边界事件（定时 / 消息） | ✅   | `bpmn:boundaryEvent`          |
+| BPMN 元素       | 状态 | LogicFlow 节点类型                |
+|---------------|----|-------------------------------|
+| 开始事件          | ✅  | `bpmn:startEvent`             |
+| 结束事件          | ✅  | `bpmn:endEvent`               |
+| 中间事件（捕获）      | ✅  | `bpmn:intermediateCatchEvent` |
+| 中间事件（抛出）      | ✅  | `bpmn:intermediateThrowEvent` |
+| 边界事件（定时 / 消息） | ✅  | `bpmn:boundaryEvent`          |
 
 ---
 
 #### 任务（Tasks）
 
-| BPMN 元素    | 状态 | LogicFlow 节点类型      |
-| ------------ | ---- | ----------------------- |
-| 用户任务     | ✅   | `bpmn:userTask`         |
-| 服务任务     | ✅   | `bpmn:serviceTask`      |
-| 脚本任务     | ✅   | `bpmn:scriptTask`       |
-| 接收任务     | ✅   | `bpmn:receiveTask`      |
-| 手工任务     | ✅   | `bpmn:manualTask`       |
-| 业务规则任务 | ✅   | `bpmn:businessRuleTask` |
+| BPMN 元素 | 状态 | LogicFlow 节点类型          |
+|---------|----|-------------------------|
+| 用户任务    | ✅  | `bpmn:userTask`         |
+| 服务任务    | ✅  | `bpmn:serviceTask`      |
+| 脚本任务    | ✅  | `bpmn:scriptTask`       |
+| 接收任务    | ✅  | `bpmn:receiveTask`      |
+| 手工任务    | ✅  | `bpmn:manualTask`       |
+| 业务规则任务  | ✅  | `bpmn:businessRuleTask` |
 
 ---
 
 #### 网关（Gateways）
 
-| BPMN 元素 | 状态 | LogicFlow 节点类型      |
-| --------- | ---- | ----------------------- |
-| 排他网关  | ✅   | `bpmn:exclusiveGateway` |
-| 并行网关  | ✅   | `bpmn:parallelGateway`  |
-| 包容网关  | ✅   | `bpmn:inclusiveGateway` |
+| BPMN 元素 | 状态 | LogicFlow 节点类型          |
+|---------|----|-------------------------|
+| 排他网关    | ✅  | `bpmn:exclusiveGateway` |
+| 并行网关    | ✅  | `bpmn:parallelGateway`  |
+| 包容网关    | ✅  | `bpmn:inclusiveGateway` |
 
 ---
 
 #### 子流程与调用（SubProcess）
 
-| BPMN 元素    | 状态 | LogicFlow 节点类型        |
-| ------------ | ---- | ------------------------- |
-| 嵌入式子流程 | ✅   | `bpmn:subProcess`         |
-| 展开子流程   | ✅   | `bpmn:expandedSubProcess` |
-| 调用活动     | ✅   | `bpmn:callActivity`       |
+| BPMN 元素 | 状态 | LogicFlow 节点类型            |
+|---------|----|---------------------------|
+| 嵌入式子流程  | ✅  | `bpmn:subProcess`         |
+| 展开子流程   | ✅  | `bpmn:expandedSubProcess` |
+| 调用活动    | ✅  | `bpmn:callActivity`       |
 
 ---
 
 #### 连线（Flows）
 
-| BPMN 元素  | 状态 | LogicFlow 节点类型  |
-| ---------- | ---- | ------------------- |
-| 序列流     | ✅   | `bpmn:sequenceFlow` |
-| 条件序列流 | ✅   | `bpmn:sequenceFlow` |
-| 默认序列流 | ✅   | `bpmn:sequenceFlow` |
+| BPMN 元素 | 状态 | LogicFlow 节点类型      |
+|---------|----|---------------------|
+| 序列流     | ✅  | `bpmn:sequenceFlow` |
+| 条件序列流   | ✅  | `bpmn:sequenceFlow` |
+| 默认序列流   | ✅  | `bpmn:sequenceFlow` |
 
 ---
 

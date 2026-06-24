@@ -1,61 +1,64 @@
 import LogicFlow, { CircleNodeModel } from "@logicflow/core";
-import { NODE_TYPES } from "../../../../core/constants";
-import { BpmnIdGenerator } from "../../../../utils/id-generator";
-import { NodeBehavior, NodeCap, PropertyBase } from "../../../../types";
-import { StartEventBehavior } from "../../../../features/behaviors/nodes/events/start-event";
-import { StartEventProperties } from "../../../../features/properties/events/start";
+import type { ConnectRule } from "@logicflow/core";
+import { NODE_TYPE_NAMES, NODE_TYPES } from "../../../../core/constants";
+import { Property, PropertyMethod } from "../../../../features/schema/types";
+import { StartEventSchema } from "../../../../features/schema/nodes/event/start-event";
+import { createConnectRules, getNodeBehavior } from "../../../../features/behaviors";
+import { BpmnIdGenerator } from "../../../../helper/id-generator";
 
 /**
  * 开始事件节点模型
+ *
+ * BPMN 规则：
+ * - 不允许任何入线
+ * - 必须且只能有一条出线
  */
-export class StartEventModel extends CircleNodeModel implements NodeCap {
-
+export class StartEventModel extends CircleNodeModel implements PropertyMethod {
     static readonly type = NODE_TYPES.START_EVENT;
 
-    getNodeProperties(): PropertyBase[] {
-        return StartEventProperties;
-    }
-
-    getBehavior(): NodeBehavior {
-        return StartEventBehavior;
+    getSchemas(): Property[] {
+        return StartEventSchema;
     }
 
     constructor(data: any, graphModel: any) {
         super(data, graphModel);
-
-        // StartEvent 固定大小
         this.r = 26;
 
-        // 语义约束
+        // 开始事件：只出不进（锚点层面阻止入线）
         this.isAllowIncoming = false;
         this.isAllowOutgoing = true;
+
+        // 直接在实例上设置连接规则（避免 LogicFlow 缓存绕过）
+        this.applyConnectRules();
     }
 
     initNodeData(data: LogicFlow.NodeConfig) {
         super.initNodeData(data);
 
-        let bpmnId = BpmnIdGenerator.generate();
-        this.id = bpmnId;
-        this.text.value = "开始";
+        // 初始化赋值
+        data.id = BpmnIdGenerator.generate();
+        data.text = NODE_TYPE_NAMES[this.type];
 
-        // 初始化 properties（非常关键）
-        this.properties = {};
-        this.getNodeProperties().forEach(prop => {
-            this.properties[prop.key] = "";
-            if (prop.key === "id") {
-                this.properties[prop.key] = bpmnId;
+        // form构建
+        const schemas = this.getSchemas();
+        const form: { [key: string]: any } = {};
+        for (const schema of schemas) {
+            if (schema.field === "id") {
+                form[schema.field] = data.id;
+                continue;
             }
-            if (prop.key === "name") {
-                this.properties[prop.key] = "开始";
+            if (schema.field === "name") {
+                form[schema.field] = data.text;
+                continue;
             }
-        });
-
-        // 默认文本
-        if (!this.text?.value) {
-            this.text.value = "开始";
-            this.text.x = this.x;
-            this.text.y = this.y + 4;
+            form[schema.field] = schema.default;
         }
+
+        // 赋值
+        data.properties ??= {};
+        data.properties["form"] = form;
+        data.properties["schemas"] = schemas;
+        data.properties["rules"] = {};
     }
 
     getNodeStyle() {
@@ -64,5 +67,17 @@ export class StartEventModel extends CircleNodeModel implements NodeCap {
             strokeWidth: 1,
             fill: "#fff"
         };
+    }
+
+    /**
+     * 应用 BPMN 行为规则到实例的 sourceRules / targetRules
+     */
+    private applyConnectRules(): void {
+        const behavior = getNodeBehavior(this.type);
+        if (!behavior) return;
+
+        const { sourceRules, targetRules } = createConnectRules(behavior);
+        this.sourceRules = sourceRules;
+        this.targetRules = targetRules;
     }
 }

@@ -1,4 +1,4 @@
-import { ContextMenuItem } from "../../types";
+import { ContextMenuItem } from "./types";
 
 /**
  * node上下文菜单

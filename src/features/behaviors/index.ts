@@ -1,33 +1,117 @@
-import type LogicFlow from "@logicflow/core";
-import { BehaviorsEngine } from "./engine";
-import { validateBeforePublish } from "../validation/graph-validator";
+import { NODE_TYPES } from "../../core/constants";
+import type { NodeBehavior } from "./types";
 
 /**
- * 注册线初始化
- * @param lf {@link LogicFlow} 实例
+ * BPMN 2.0 节点行为规则注册表
+ *
+ * 基于 document/NodeBehaviors.md 定义的规则：
+ * - 连线创建阶段：校验拓扑与类型合法性（allowOut/allowIn/maxOut/maxIn/allowTargetTypes/allowSourceTypes）
+ * - 全流程校验阶段：校验 minIn/minOut 等完整性约束（后续实现）
  */
-export function registerEdgeConstraint(lf: LogicFlow) {
-    const engine = new BehaviorsEngine(lf);
+export const NODE_BEHAVIORS: Record<string, NodeBehavior> = {
+    /* ========== 事件 ========== */
 
-    lf.on("edge:add", ({ data }) => {
-        const source = lf.getNodeModelById(data.sourceNodeId);
-        const target = lf.getNodeModelById(data.targetNodeId);
-        const edge = lf.getEdgeModelById(data.id);
-        if (!source || !target || !edge) return;
+    [NODE_TYPES.START_EVENT]: {
+        type: "开始事件",
+        allowOut: true,
+        allowIn: false,
+        minOut: 1,
+        maxOut: 1,
+        minIn: 0,
+        maxIn: 0
+    },
 
-        const { valid, message } = engine.validateEdge({ source, target, edge });
-        if (!valid) {
-            lf.deleteEdge(data.id);
-            lf.emit("toast", message);
-        }
-    });
+    [NODE_TYPES.END_EVENT]: {
+        type: "结束事件",
+        allowOut: false,
+        allowIn: true,
+        minOut: 0,
+        maxOut: 0,
+        minIn: 1,
+        maxIn: 99
+    },
 
-    // 自动保存
-    lf.on("graph:save", () => {
-        const errors = validateBeforePublish(lf);
-        if (errors.length === 0) {
-            console.log(`验证通过`);
-        }
-    });
+    /* ========== 任务 ========== */
+
+    [NODE_TYPES.USER_TASK]: {
+        type: "用户任务",
+        allowOut: true,
+        allowIn: true,
+        minOut: 1,
+        maxOut: 1,
+        minIn: 1,
+        maxIn: 99
+    },
+
+    [NODE_TYPES.SERVICE_TASK]: {
+        type: "服务任务",
+        allowOut: true,
+        allowIn: true,
+        minOut: 1,
+        maxOut: 1,
+        minIn: 1,
+        maxIn: 99
+    },
+
+    [NODE_TYPES.SCRIPT_TASK]: {
+        type: "脚本任务",
+        allowOut: true,
+        allowIn: true,
+        minOut: 1,
+        maxOut: 1,
+        minIn: 1,
+        maxIn: 99
+    },
+
+    [NODE_TYPES.RECEIVE_TASK]: {
+        type: "接收任务",
+        allowOut: true,
+        allowIn: true,
+        minOut: 0, // 允许无出线（流程可暂停）
+        maxOut: 1,
+        minIn: 1,
+        maxIn: 99
+    },
+
+    /* ========== 网关 ========== */
+
+    [NODE_TYPES.EXCLUSIVE_GATEWAY]: {
+        type: "排他网关",
+        allowOut: true,
+        allowIn: true,
+        minOut: 2, // 条件互斥分支，至少 2 条出线
+        maxOut: 99,
+        minIn: 1,
+        maxIn: 99
+    },
+
+    [NODE_TYPES.PARALLEL_GATEWAY]: {
+        type: "并行网关",
+        allowOut: true,
+        allowIn: true,
+        minOut: 2, // 并行执行，至少 2 条出线
+        maxOut: 99,
+        minIn: 1,
+        maxIn: 99
+    },
+
+    [NODE_TYPES.INCLUSIVE_GATEWAY]: {
+        type: "包容网关",
+        allowOut: true,
+        allowIn: true,
+        minOut: 2, // 条件可并行分支，至少 2 条出线
+        maxOut: 99,
+        minIn: 1,
+        maxIn: 99
+    }
+};
+
+/**
+ * 根据节点类型获取行为规则
+ */
+export function getNodeBehavior(type: string): NodeBehavior | undefined {
+    return NODE_BEHAVIORS[type];
 }
 
+export type { NodeBehavior } from "./types";
+export { createConnectRules, createSourceRules, createTargetRules } from "./rules";
