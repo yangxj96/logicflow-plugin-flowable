@@ -168,10 +168,7 @@ function renderControl(
 
         // name 字段：立即更新节点显示文本（所有节点类型通用）
         if (field === "name" && state.mode.value !== "process") {
-            const targetId =
-                state.mode.value === "node"
-                    ? state.currentNode.value?.id
-                    : state.currentEdge.value?.id;
+            const targetId = state.mode.value === "node" ? state.currentNode.value?.id : state.currentEdge.value?.id;
             if (targetId) {
                 try {
                     state.lf.updateText(targetId, val ?? "");

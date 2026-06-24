@@ -9,6 +9,8 @@ import { BPMN_ELEMENT_TAGS } from "./types";
 const BPMN_NS = "http://www.omg.org/spec/BPMN/20100524/MODEL";
 const FLOWABLE_NS = "http://flowable.org/bpmn";
 const BPMNDI_NS = "http://www.omg.org/spec/BPMN/20100524/DI";
+const DI_NS = "http://www.omg.org/spec/DD/20100524/DI";
+const DC_NS = "http://www.omg.org/spec/DD/20100524/DC";
 
 /**
  * 构建缩进
@@ -38,8 +40,12 @@ function isFlowableField(field: string): boolean {
 function buildAttributes(form: Record<string, any>, schemas: Property[]): string {
     const parts: string[] = [];
 
+    // sourceRef / targetRef 由 extraAttrs 单独处理，避免重复
+    const EXTRA_ATTR_FIELDS = new Set(["sourceRef", "targetRef"]);
+
     for (const schema of schemas) {
         if (schema.type !== "inline") continue;
+        if (EXTRA_ATTR_FIELDS.has(schema.field)) continue;
 
         const value = form[schema.field];
 
@@ -167,6 +173,8 @@ export function toBpmnXml(lf: LogicFlow): string {
             ` xmlns="${BPMN_NS}"` +
             ` xmlns:flowable="${FLOWABLE_NS}"` +
             ` xmlns:bpmndi="${BPMNDI_NS}"` +
+            ` xmlns:di="${DI_NS}"` +
+            ` xmlns:dc="${DC_NS}"` +
             ` targetNamespace="${escapeXml(process.category || "http://flowable.org/process")}"` +
             `>`
     );
@@ -211,10 +219,70 @@ export function toBpmnXml(lf: LogicFlow): string {
         lines.push(buildElement(tagName, form, schemas, 2, extraAttrs));
     }
 
-    // 关闭
+    // 关闭 process
     lines.push(`${indent(1)}</process>`);
+
+    // BPMN DI（位置信息）
+    lines.push("");
+    lines.push(buildBpmnDi(processForm.id, nodes, edges));
+
+    // 关闭 definitions
     lines.push(`</definitions>`);
-    lines.push(""); // 末尾换行
+    lines.push("");
+
+    return lines.join("\n");
+}
+
+/**
+ * 构建 BPMN DI 段（节点坐标 + 连线路径点）
+ */
+function buildBpmnDi(processId: string, nodes: any[], edges: any[]): string {
+    const lines: string[] = [];
+    lines.push(`${indent(1)}<bpmndi:BPMNDiagram>`);
+    lines.push(`${indent(2)}<bpmndi:BPMNPlane bpmnElement="${escapeXml(processId)}">`);
+
+    // BPMNShape for each node
+    for (const node of nodes) {
+        const tagName = getTagName(node.type);
+        if (!tagName || tagName === "sequenceFlow") continue;
+
+        const x = Math.round(node.x ?? 0);
+        const y = Math.round(node.y ?? 0);
+        const w = node.width ?? 120;
+        const h = node.height ?? 70;
+
+        lines.push(
+            `${indent(3)}<bpmndi:BPMNShape id="shape-${escapeXml(node.id)}" bpmnElement="${escapeXml(node.id)}">`
+        );
+        lines.push(`${indent(4)}<dc:Bounds x="${x}" y="${y}" width="${w}" height="${h}" />`);
+        lines.push(`${indent(3)}</bpmndi:BPMNShape>`);
+    }
+
+    // BPMNEdge for each sequence flow
+    for (const edge of edges) {
+        const tagName = getTagName(edge.type);
+        if (!tagName) continue;
+
+        const source = nodes.find((n: any) => n.id === edge.sourceNodeId);
+        const target = nodes.find((n: any) => n.id === edge.targetNodeId);
+
+        if (source && target) {
+            const sx = Math.round((source.x ?? 0) + (source.width ?? 120) / 2);
+            const sy = Math.round((source.y ?? 0) + (source.height ?? 70) / 2);
+            const tx = Math.round((target.x ?? 0) + (target.width ?? 120) / 2);
+            const ty = Math.round((target.y ?? 0) + (target.height ?? 70) / 2);
+
+            lines.push(
+                `${indent(3)}<bpmndi:BPMNEdge id="edge-${escapeXml(edge.id)}" bpmnElement="${escapeXml(edge.id)}">`
+            );
+            lines.push(`${indent(4)}<di:waypoint x="${sx}" y="${sy}" />`);
+            lines.push(`${indent(4)}<di:waypoint x="${tx}" y="${ty}" />`);
+            lines.push(`${indent(3)}</bpmndi:BPMNEdge>`);
+        }
+    }
+
+    lines.push(`${indent(2)}</bpmndi:BPMNPlane>`);
+    lines.push(`${indent(1)}</bpmndi:BPMNDiagram>`);
 
     return lines.join("\n");
 }

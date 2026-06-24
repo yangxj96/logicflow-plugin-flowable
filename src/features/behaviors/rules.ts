@@ -4,7 +4,13 @@ import type { NodeBehavior } from "./types";
 /** LogicFlow 连线校验规则类型（非公开导出，本地声明） */
 export interface ConnectRule {
     message: string;
-    validate: (source?: any, target?: any, sourceAnchor?: any, targetAnchor?: any, edgeId?: string) => boolean | undefined;
+    validate: (
+        source?: any,
+        target?: any,
+        sourceAnchor?: any,
+        targetAnchor?: any,
+        edgeId?: string
+    ) => boolean | undefined;
 }
 
 /**
