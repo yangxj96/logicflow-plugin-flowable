@@ -74,16 +74,11 @@ src/
 
 ## 参考文档
 
-### 知识图谱（Nodes 行为规则）
+### Obsidian 知识库
 
-- `document/Nodes/00-行为规则总览.md` — 校验阶段 + 通用规则
-- `document/Nodes/01-事件节点.md` — 开始/结束/中间/边界事件
-- `document/Nodes/02-任务节点.md` — 用户/服务/脚本/接收任务
-- `document/Nodes/03-子流程与调用.md` — SubProcess + CallActivity
-- `document/Nodes/04-网关节点.md` — 排他/包容/并行网关
-- `document/Nodes/05-边与设计原则.md` — 边规则 + 设计原则
+- [[20-前端/30-流程建模插件]] — 流程建模插件完整文档（含节点行为规则、导入导出、项目结构）
 
-### 其他文档
+### 项目内文档
 
 - `document/Plans/P-子流程标准化修复计划.md` — 子流程组件标准化修复计划
 - `README.md` — 支持的 BPMN 元素矩阵
