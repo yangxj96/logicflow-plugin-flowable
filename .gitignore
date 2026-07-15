@@ -1,3 +1,9 @@
 .idea/**
 dist/
 node_modules/
+
+# 代码智能索引（自动生成，可重建）
+.codegraph/
+
+# pnpm workspace（根目录使用）
+pnpm-workspace.yaml
