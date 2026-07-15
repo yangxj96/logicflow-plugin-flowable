@@ -14,10 +14,10 @@
       "@/*": [
         "./src/*"
       ],
-      "@yangxj96/logicflow-flowable": [
+      "@yangxj96/logicflow-plugin-flowable": [
         "../src"
       ],
-      "@yangxj96/logicflow-flowable/*": [
+      "@yangxj96/logicflow-plugin-flowable/*": [
         "../src/*"
       ]
     }

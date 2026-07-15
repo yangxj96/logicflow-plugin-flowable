@@ -15,7 +15,7 @@ export default defineConfig({
     resolve: {
         alias: {
             "@": fileURLToPath(new URL("./src", import.meta.url)),
-            "@yangxj96/logicflow-flowable": fileURLToPath(
+            "@yangxj96/logicflow-plugin-flowable": fileURLToPath(
                 new URL("../src", import.meta.url)
             )
         }

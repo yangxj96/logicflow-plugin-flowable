@@ -2,7 +2,7 @@
 
 ## 项目概述
 
-`@yangxj96/logicflow-flowable` 是基于 [LogicFlow](https://logicflow.org) 的 **BPMN 2.0 流程建模插件**，无缝对接 [Flowable](https://www.flowable.org) 工作流引擎。
+`@yangxj96/logicflow-plugin-flowable` 是基于 [LogicFlow](https://logicflow.org) 的 **BPMN 2.0 流程建模插件**，无缝对接 [Flowable](https://www.flowable.org) 工作流引擎。
 
 - 在 spectra-ui 中作为本地 `file:` 引用（`file:../logicflow-flowable`）
 - 输出：ESM + CJS + .d.ts（通过 tsup 构建）

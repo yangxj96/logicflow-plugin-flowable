@@ -2,7 +2,7 @@ import type LogicFlow from "@logicflow/core";
 import { BpmnIdGenerator } from "../../helper/id-generator";
 import { ProcessModel } from "./types";
 
-export const PROCESS_CONTEXT = Symbol("logicflow-flowable:process");
+export const PROCESS_CONTEXT = Symbol("logicflow-plugin-flowable:process");
 
 /**
  * 初始化流程上下文

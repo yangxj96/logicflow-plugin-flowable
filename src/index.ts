@@ -1,5 +1,5 @@
 /*
- * logicflow-flowable v0.1.0
+ * logicflow-plugin-flowable v0.0.5
  * Copyright 2025 Yang XJ. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +23,7 @@ import { fromBpmnXml } from "./features/import";
  * 基于 LogicFlow 的 BPMN 2.0 流程图可视化与建模插件，无缝对接 Flowable 工作流引擎。
  *
  * @example
- * import Flowable from '@yangxj96/logicflow-flowable';
+ * import Flowable from '@yangxj96/logicflow-plugin-flowable';
  * LogicFlow.use(Flowable.Plugin);
  *
  * // 导出 BPMN XML

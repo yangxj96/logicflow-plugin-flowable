@@ -1,0 +1,3 @@
+allowBuilds:
+  '@logicflow/core': true
+  esbuild: true

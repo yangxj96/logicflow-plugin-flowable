@@ -1,4 +1,4 @@
-# logicflow-flowable
+# logicflow-plugin-flowable
 
 > 基于 LogicFlow 的 BPMN 2.0 流程图建模插件，无缝对接 Flowable 工作流引擎。
 > 用 LogicFlow 画流程图，一键导出 Flowable 可直接部署的 BPMN XML。
