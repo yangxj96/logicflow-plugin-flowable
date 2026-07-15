@@ -4,6 +4,10 @@ import { h, RectNode } from "@logicflow/core";
  * 调用活动视图 — 粗边框圆角矩形
  */
 export class CallActivityView extends RectNode {
+    getText() {
+        return null;
+    }
+
     getShape() {
         const { x, y, width, height, properties } = this.props.model;
         const textVal = (properties as any)?.form?.name || (properties as any)?.name || "";

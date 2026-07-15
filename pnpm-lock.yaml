@@ -21,6 +21,9 @@ importers:
       '@logicflow/extension':
         specifier: ^2.1.11
         version: 2.3.0(@logicflow/core@2.2.4)
+      preact:
+        specifier: ^10.17.1
+        version: 10.29.7
       prettier:
         specifier: ^3.7.4
         version: 3.9.5

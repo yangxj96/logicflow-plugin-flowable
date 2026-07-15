@@ -73,16 +73,6 @@ export const NODE_BEHAVIORS: Record<string, NodeBehavior> = {
         maxIn: 99
     },
 
-    [NODE_TYPES.EXPANDED_SUB_PROCESS]: {
-        type: "展开子流程",
-        allowOut: true,
-        allowIn: true,
-        minOut: 1,
-        maxOut: 99,
-        minIn: 1,
-        maxIn: 99
-    },
-
     [NODE_TYPES.CALL_ACTIVITY]: {
         type: "调用活动",
         allowOut: true,

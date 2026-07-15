@@ -1,6 +1,5 @@
 import LogicFlow from "@logicflow/core";
 import { registerSubProcess } from "./sub-process";
-import { registerExpandedSubProcess } from "./expanded-sub-process";
 import { registerCallActivity } from "./call-activity";
 
 /**
@@ -8,6 +7,5 @@ import { registerCallActivity } from "./call-activity";
  */
 export function registerSubProcessNodes(lf: LogicFlow) {
     registerSubProcess(lf);
-    registerExpandedSubProcess(lf);
     registerCallActivity(lf);
 }

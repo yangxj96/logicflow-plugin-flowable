@@ -14,6 +14,25 @@ export const SubProcessSchema: Property[] = [
         default: "false"
     },
     {
+        field: "flowable:exclusive",
+        label: "独占模式",
+        type: "inline",
+        component: "boolean",
+        default: "false"
+    },
+    {
+        field: "flowable:multiInstanceType",
+        label: "多实例类型",
+        type: "inline",
+        component: "select",
+        default: "",
+        options: [
+            { label: "无", value: "" },
+            { label: "并行", value: "parallel" },
+            { label: "串行", value: "sequential" }
+        ]
+    },
+    {
         field: "document",
         label: "说明",
         type: "children",

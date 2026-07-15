@@ -8,6 +8,7 @@ export const XML_TAG_TO_TYPE: Record<string, string> = {
     intermediateThrowEvent: "bpmn:intermediateThrowEvent",
     boundaryEvent: "bpmn:boundaryEvent",
     subProcess: "bpmn:subProcess",
+    expandedSubProcess: "bpmn:subProcess", // 旧版非标准类型，统一映射为 subProcess
     callActivity: "bpmn:callActivity",
     userTask: "bpmn:userTask",
     serviceTask: "bpmn:serviceTask",

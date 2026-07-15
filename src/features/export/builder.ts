@@ -11,6 +11,7 @@ const FLOWABLE_NS = "http://flowable.org/bpmn";
 const BPMNDI_NS = "http://www.omg.org/spec/BPMN/20100524/DI";
 const DI_NS = "http://www.omg.org/spec/DD/20100524/DI";
 const DC_NS = "http://www.omg.org/spec/DD/20100524/DC";
+const XSI_NS = "http://www.w3.org/2001/XMLSchema-instance";
 
 /**
  * 构建缩进
@@ -73,11 +74,51 @@ function buildAttributes(form: Record<string, any>, schemas: Property[]): string
 function buildChildren(form: Record<string, any>, schemas: Property[], level: number): string {
     const lines: string[] = [];
 
+    // 事件定义字段列表（输出为空元素）
+    const EVENT_DEFINITIONS = new Set([
+        "timerEventDefinition",
+        "messageEventDefinition",
+        "signalEventDefinition",
+        "errorEventDefinition"
+    ]);
+
+    // terminateAll 特殊处理，输出为 terminateEventDefinition
+    const TERMINATE_FIELDS = new Set(["terminateAll"]);
+
+    // conditionExpression 需要 xsi:type 属性
+    const CONDITION_EXPRESSION_FIELDS = new Set(["conditionExpression"]);
+
     for (const schema of schemas) {
         if (schema.type !== "children") continue;
 
         const value = form[schema.field];
         if (value == null || value === "" || value === false) continue;
+
+        // 事件定义：输出为空元素
+        if (EVENT_DEFINITIONS.has(schema.field)) {
+            lines.push(`${indent(level)}<${schema.field} />`);
+            continue;
+        }
+
+        // terminateAll：输出为 terminateEventDefinition
+        if (TERMINATE_FIELDS.has(schema.field)) {
+            lines.push(`${indent(level)}<terminateEventDefinition />`);
+            continue;
+        }
+
+        // conditionExpression：添加 xsi:type 属性
+        if (CONDITION_EXPRESSION_FIELDS.has(schema.field)) {
+            if (schema.cdata) {
+                lines.push(
+                    `${indent(level)}<conditionExpression xsi:type="tFormalExpression"><![CDATA[${value}]]></conditionExpression>`
+                );
+            } else {
+                lines.push(
+                    `${indent(level)}<conditionExpression xsi:type="tFormalExpression">${escapeXml(String(value))}</conditionExpression>`
+                );
+            }
+            continue;
+        }
 
         const tagName = fieldToAttrName(schema.field);
 
@@ -175,6 +216,7 @@ export function toBpmnXml(lf: LogicFlow): string {
             ` xmlns:bpmndi="${BPMNDI_NS}"` +
             ` xmlns:di="${DI_NS}"` +
             ` xmlns:dc="${DC_NS}"` +
+            ` xmlns:xsi="${XSI_NS}"` +
             ` targetNamespace="${escapeXml(process.category || "http://flowable.org/process")}"` +
             `>`
     );

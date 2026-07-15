@@ -79,6 +79,8 @@ export default class FlowablePlugin {
                 LogicFlow: LogicFlowCore,
                 options: {}
             });
+            // 禁用级联删除，避免删除节点时的无限递归
+            this.dynamicGroupInstance.cascadeDeleteChildren = false;
             this.dynamicGroupInstance.init();
         } catch {
             // DynamicGroup 可能未安装

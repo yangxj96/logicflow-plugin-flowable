@@ -1,7 +1,9 @@
 import { DynamicGroupNode } from "@logicflow/extension";
 
 /**
- * 嵌入式子流程视图 — 不显示名称，纯容器
+ * 嵌入式子流程视图
+ *
+ * 继承 DynamicGroupNode 处理容器逻辑，不重写 getShape 以避免递归
  */
 export class SubProcessView extends DynamicGroupNode {
     getResizeControl() {

@@ -9,7 +9,7 @@ export const EndEventSchema: Property[] = [
     {
         field: "terminateAll",
         label: "终止全部",
-        type: "inline",
+        type: "children",
         component: "boolean",
         default: "false"
     },

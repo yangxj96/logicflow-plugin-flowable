@@ -24,7 +24,6 @@ export { InclusiveGatewaySchema } from "./nodes/gateway/inclusive-gateway";
 
 // 子流程与调用
 export { SubProcessSchema } from "./nodes/subprocess/sub-process";
-export { ExpandedSubProcessSchema } from "./nodes/subprocess/expanded-sub-process";
 export { CallActivitySchema } from "./nodes/subprocess/call-activity";
 
 // 连线
@@ -44,7 +43,6 @@ import { ExclusiveGatewaySchema } from "./nodes/gateway/exclusive-gateway";
 import { ParallelGatewaySchema } from "./nodes/gateway/parallel-gateway";
 import { InclusiveGatewaySchema } from "./nodes/gateway/inclusive-gateway";
 import { SubProcessSchema } from "./nodes/subprocess/sub-process";
-import { ExpandedSubProcessSchema } from "./nodes/subprocess/expanded-sub-process";
 import { CallActivitySchema } from "./nodes/subprocess/call-activity";
 import { SequenceFlowSchema } from "./edges/sequence-flow";
 
@@ -72,7 +70,6 @@ const schemaRegistry: Record<string, Property[]> = {
 
     // 子流程与调用
     [NODE_TYPES.SUB_PROCESS]: SubProcessSchema,
-    [NODE_TYPES.EXPANDED_SUB_PROCESS]: ExpandedSubProcessSchema,
     [NODE_TYPES.CALL_ACTIVITY]: CallActivitySchema,
 
     // 连线

@@ -68,12 +68,6 @@ export const DND_ITEMS = [
         group: "子流程"
     },
     {
-        type: NODE_TYPES.EXPANDED_SUB_PROCESS,
-        label: "展开子流程",
-        icon: NODE_ICONS.EXPANDED_SUB_PROCESS,
-        group: "子流程"
-    },
-    {
         type: NODE_TYPES.CALL_ACTIVITY,
         label: "调用活动",
         icon: NODE_ICONS.CALL_ACTIVITY,

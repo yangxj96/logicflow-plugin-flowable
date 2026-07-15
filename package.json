@@ -51,11 +51,13 @@
         "@logicflow/core": "^2.1.11",
         "@logicflow/extension": "^2.1.11",
         "element-plus": "^2.13.5",
+        "preact": "^10.17.1",
         "vue": "^3.5.30"
     },
     "devDependencies": {
         "@logicflow/core": "^2.1.11",
         "@logicflow/extension": "^2.1.11",
+        "preact": "^10.17.1",
         "prettier": "^3.7.4",
         "tsup": "^8.5.1",
         "typescript": "^5.9.3",
