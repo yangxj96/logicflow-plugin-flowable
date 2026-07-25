@@ -1,3 +1,4 @@
+import type LogicFlow from "@logicflow/core";
 import { getSchemaByType } from "../schema";
 import { Property } from "../schema/types";
 import { XML_TAG_TO_TYPE, VALID_FLOW_ELEMENTS, ImportResult } from "./types";
@@ -10,7 +11,7 @@ const BPMN_NS = "http://www.omg.org/spec/BPMN/20100524/MODEL";
 /**
  * 从 BPMN XML 字符串导入流程图
  */
-export function fromBpmnXml(xmlString: string, lf: any): ImportResult {
+export function fromBpmnXml(xmlString: string, lf: LogicFlow): ImportResult {
     // 0. 预处理：去除重复属性（修复旧版导出的 bug）
     xmlString = dedupeAttrs(xmlString);
 
