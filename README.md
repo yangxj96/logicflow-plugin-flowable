@@ -3,15 +3,54 @@
 > 基于 LogicFlow 的 BPMN 2.0 流程图建模插件，无缝对接 Flowable 工作流引擎。
 > 用 LogicFlow 画流程图，一键导出 Flowable 可直接部署的 BPMN XML。
 
-## 技术栈
+## 安装
 
-| 技术 | 版本 | 说明 |
-|---|---|---|
-| TypeScript | 5.9.3 | 类型系统 |
-| tsup | 8.5.1 | 构建工具（ESM + CJS + .d.ts） |
-| LogicFlow | ^2.1.11 | 流程图引擎（对等依赖） |
-| Vue | ^3.5.30 | 渲染层（对等依赖） |
-| Element Plus | ^2.13.5 | UI 组件（对等依赖） |
+```bash
+npm install @yangxj96/logicflow-plugin-flowable
+# 或
+pnpm add @yangxj96/logicflow-plugin-flowable
+```
+
+### 对等依赖
+
+本插件需要以下对等依赖，请确保项目中已安装：
+
+| 包 | 版本 |
+|---|---|
+| `@logicflow/core` | ^2.1.11 |
+| `@logicflow/extension` | ^2.1.11 |
+| `element-plus` | ^2.13.5 |
+| `vue` | ^3.5.30 |
+
+## 快速开始
+
+```typescript
+import LogicFlow from "@logicflow/core";
+import Flowable from "@yangxj96/logicflow-plugin-flowable";
+import "@logicflow/core/dist/index.css";
+import "@yangxj96/logicflow-plugin-flowable/style.css";
+
+const lf = new LogicFlow({
+    container: document.querySelector("#graph")!,
+    plugins: [Flowable.Plugin],
+    pluginsOptions: {
+        [Flowable.Plugin.pluginName]: {
+            panel: {
+                dnd: document.querySelector("#dnd-panel")!,
+                property: document.querySelector("#property-panel")!
+            }
+        }
+    }
+});
+
+lf.render();
+
+// 导出 BPMN XML
+const xml = Flowable.toBpmnXml(lf);
+
+// 导入 BPMN XML
+const result = Flowable.fromBpmnXml(xmlString, lf);
+```
 
 ## 支持的 BPMN 元素
 
