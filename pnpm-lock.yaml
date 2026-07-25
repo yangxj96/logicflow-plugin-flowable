@@ -33,9 +33,6 @@ importers:
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
-      xml-formatter:
-        specifier: ^3.7.0
-        version: 3.7.0
 
 packages:
 
@@ -782,14 +779,6 @@ packages:
       typescript:
         optional: true
 
-  xml-formatter@3.7.0:
-    resolution: {integrity: sha512-+8qTc3zv2UcJ1v9IsSIce37Dl4MQG14Cp7tWrwmy202UaI1wqRukw5QMX1JHsV+DX64yw77EgGsj2s5wGvuMbQ==}
-    engines: {node: '>= 16'}
-
-  xml-parser-xo@4.1.6:
-    resolution: {integrity: sha512-mXbSNSM+rIwndoxSwmFa83bOdeP8G/cOGr7XvxA67X7ebCzoAuVez9JYDCDub3zRDNBZxIbfjuXLSsamr7NfwQ==}
-    engines: {node: '>= 20'}
-
 snapshots:
 
   '@antv/hierarchy@0.6.11':
@@ -1424,9 +1413,3 @@ snapshots:
       '@vue/shared': 3.5.39
     optionalDependencies:
       typescript: 5.9.3
-
-  xml-formatter@3.7.0:
-    dependencies:
-      xml-parser-xo: 4.1.6
-
-  xml-parser-xo@4.1.6: {}
