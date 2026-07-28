@@ -1,5 +1,6 @@
 import type { LogicFlow } from "@logicflow/core";
 import { ProcessModel } from "../../features/context/types";
+import { PickerType } from "../../features/schema/types";
 import { App, ComputedRef, Ref, VNode } from "vue";
 import { FormInstance } from "element-plus";
 
@@ -9,6 +10,7 @@ import { FormInstance } from "element-plus";
 export interface PropertyPanelOptions {
     lf: LogicFlow;
     container: HTMLElement;
+    pickers?: PickerType[];
 }
 
 /**
@@ -43,6 +45,10 @@ export interface PropertyPanelState {
      * 表单唯一 key，切换选中元素时变化以强制重建表单
      */
     formKey: ComputedRef<string>;
+    /**
+     * 使用方已实现的选择器类型
+     */
+    pickers: PickerType[];
 }
 
 /**

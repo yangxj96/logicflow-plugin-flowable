@@ -140,7 +140,8 @@ export default class FlowablePlugin {
         if (panel.property) {
             registerPropertyPanel({
                 lf: this.lf,
-                container: panel.property
+                container: panel.property,
+                pickers: this.options.pickers
             });
         }
     }
@@ -153,7 +154,8 @@ export default class FlowablePlugin {
             panel: {
                 dnd: options?.panel?.dnd,
                 property: options?.panel?.property
-            }
+            },
+            pickers: options?.pickers ?? []
         };
     }
 }

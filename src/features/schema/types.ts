@@ -1,7 +1,32 @@
 /**
  * 属性组件类型
  */
-export type PropertyComponent = "string" | "textarea" | "number" | "boolean" | "select" | "expression";
+export type PropertyComponent = "string" | "textarea" | "number" | "boolean" | "select" | "expression" | "picker";
+
+/**
+ * 选择器业务类型
+ */
+export type PickerType = "form" | "user" | "group" | "javaClass" | "process";
+
+/**
+ * 选择器请求事件载荷
+ */
+export interface PickerRequestPayload {
+    /** 选择器业务类型 */
+    pickerType: PickerType;
+    /** 属性字段名 */
+    field: string;
+    /** 当前值 */
+    currentValue: string;
+    /** 是否多选 */
+    multiple: boolean;
+    /** 节点 ID */
+    nodeId?: string;
+    /** 节点类型 */
+    nodeType?: string;
+    /** 回填回调（value 存入 BPMN，label 用于面板显示） */
+    resolve: (value: string, label?: string) => void;
+}
 
 /**
  * 属性验证规则
@@ -74,6 +99,14 @@ export interface Property {
      * 适用于脚本、表达式等可能含 XML 特殊字符的内容
      */
     cdata?: boolean;
+    /**
+     * 选择器业务类型（component 为 "picker" 时使用）
+     */
+    pickerType?: PickerType;
+    /**
+     * 是否多选（picker 模式下）
+     */
+    pickerMultiple?: boolean;
 }
 
 /**

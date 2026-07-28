@@ -27,7 +27,8 @@ onMounted(() => {
                 panel: {
                     dnd: graph.value,
                     property: property.value
-                }
+                },
+                pickers: ["form", "user"]
             }
         }
     });
@@ -55,6 +56,12 @@ onMounted(() => {
     });
 
     lf.render({});
+
+    lf.on("property:picker", (payload: any) => {
+        console.log("[examples] property:picker:", payload);
+        const value = window.prompt(`选择 ${payload.pickerType}（field: ${payload.field}）`);
+        if (value) payload.resolve(value);
+    });
 });
 
 function handleImport() {

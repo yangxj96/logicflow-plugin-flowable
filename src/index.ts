@@ -19,6 +19,8 @@ import FlowablePlugin from "./core";
 import { toBpmnXml } from "./features/export";
 import { fromBpmnXml } from "./features/import";
 
+export type { PickerType, PickerRequestPayload } from "./features/schema/types";
+
 /**
  * 基于 LogicFlow 的 BPMN 2.0 流程图可视化与建模插件，无缝对接 Flowable 工作流引擎。
  *

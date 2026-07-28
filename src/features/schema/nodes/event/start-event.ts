@@ -17,7 +17,8 @@ export const StartEventSchema: Property[] = [
         field: "flowable:formKey",
         label: "表单Key",
         type: "inline",
-        component: "string",
+        component: "picker",
+        pickerType: "form",
         default: ""
     },
     {

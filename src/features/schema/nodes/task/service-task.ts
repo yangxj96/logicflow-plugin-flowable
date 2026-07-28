@@ -11,7 +11,8 @@ export const ServiceTaskSchema: Property[] = [
         field: "flowable:class",
         label: "实现类",
         type: "inline",
-        component: "string",
+        component: "picker",
+        pickerType: "javaClass",
         default: ""
     },
     {

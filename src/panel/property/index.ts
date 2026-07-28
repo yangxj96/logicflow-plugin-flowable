@@ -9,15 +9,16 @@ const appMap = new WeakMap<HTMLElement, App>();
  * 注册属性面板
  * @param lf Logicflow实例
  * @param container 容器
+ * @param pickers 使用方已实现的选择器类型
  */
-export function registerPropertyPanel({ lf, container }: PropertyPanelOptions): () => void {
+export function registerPropertyPanel({ lf, container, pickers }: PropertyPanelOptions): () => void {
     if (!container) return () => {};
 
     if (appMap.has(container)) {
         return () => {};
     }
 
-    const app = createApp(createPropertyPanel(lf));
+    const app = createApp(createPropertyPanel(lf, pickers ?? []));
     app.mount(container);
 
     // 注册节点渲染器

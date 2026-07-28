@@ -20,3 +20,34 @@
     background-color: var(--el-fill-color-light);
     color: var(--el-text-color-secondary);
 }
+
+/* Picker 选中项展示容器 */
+.lf-picker-display {
+    flex: 1;
+    min-height: 32px;
+    padding: 3px 8px;
+    border: 1px solid var(--el-border-color);
+    border-radius: 4px;
+    background-color: var(--el-fill-color-blank);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+
+.lf-picker-display:hover {
+    border-color: var(--el-color-primary);
+}
+
+.lf-picker-display .el-tag {
+    margin: 0;
+}
+
+.lf-picker-placeholder {
+    color: var(--el-text-color-placeholder);
+    font-size: 13px;
+    line-height: 24px;
+}

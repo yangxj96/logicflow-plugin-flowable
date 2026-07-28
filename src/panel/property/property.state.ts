@@ -2,14 +2,16 @@ import LogicFlow from "@logicflow/core";
 import { computed, ref } from "vue";
 import { getProcessContext } from "../../features/context/process";
 import { ProcessModel } from "../../features/context/types";
+import { PickerType } from "../../features/schema/types";
 import { PropertyPanelState } from "./types";
 import type { FormInstance } from "element-plus";
 
 /**
  * 初始化state
  * @param lf LogicFlow实例
+ * @param pickers 使用方已实现的选择器类型
  */
-export function usePropertyPanel(lf: LogicFlow): PropertyPanelState {
+export function usePropertyPanel(lf: LogicFlow, pickers: PickerType[]): PropertyPanelState {
     // 模式
     const mode = ref<"node" | "edge" | "process">("process");
     // 流程
@@ -42,6 +44,7 @@ export function usePropertyPanel(lf: LogicFlow): PropertyPanelState {
         formRef,
         currentNode,
         currentEdge,
-        formKey
+        formKey,
+        pickers
     };
 }

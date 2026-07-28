@@ -10,7 +10,8 @@ export const CallActivitySchema: Property[] = [
         field: "calledElement",
         label: "调用元素",
         type: "inline",
-        component: "string",
+        component: "picker",
+        pickerType: "process",
         default: ""
     },
     {

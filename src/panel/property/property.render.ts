@@ -1,9 +1,20 @@
 import { computed, h, VNode } from "vue";
-import { ElCard, ElForm, ElFormItem, ElInput, ElInputNumber, ElSelect, ElOption, ElSwitch } from "element-plus";
+import {
+    ElButton,
+    ElCard,
+    ElForm,
+    ElFormItem,
+    ElInput,
+    ElInputNumber,
+    ElSelect,
+    ElOption,
+    ElSwitch,
+    ElTag
+} from "element-plus";
 import { NODE_TYPE_NAMES } from "../../core/constants";
 import { getSchemaByType } from "../../features/schema";
 import { ProcessSchema } from "../../features/schema";
-import { Property, PropertyComponent } from "../../features/schema/types";
+import { PickerRequestPayload, Property, PropertyComponent } from "../../features/schema/types";
 import { PropertyPanelState } from "./types";
 
 /**
@@ -229,6 +240,81 @@ function renderControl(
                 placeholder: `请输入${schema.label}（支持表达式）`,
                 "onUpdate:modelValue": onUpdate
             });
+
+        case "picker": {
+            const enabled = schema.pickerType && state.pickers.includes(schema.pickerType);
+
+            if (!enabled) {
+                return h(ElInput, {
+                    modelValue: model[field],
+                    placeholder: `请输入${schema.label}`,
+                    clearable: true,
+                    "onUpdate:modelValue": onUpdate
+                });
+            }
+
+            const labelField = `${field}Label`;
+
+            function onPick() {
+                const payload: PickerRequestPayload = {
+                    pickerType: schema.pickerType!,
+                    field,
+                    currentValue: model[field] ?? "",
+                    multiple: schema.pickerMultiple ?? false,
+                    nodeId: state.currentNode.value?.id,
+                    nodeType: state.currentNode.value?.type,
+                    resolve: (value: string, label?: string) => {
+                        model[labelField] = label ?? value;
+                        onUpdate(value);
+                    }
+                };
+                state.lf.emit("property:picker", payload);
+            }
+
+            const vals = String(model[field] ?? "")
+                .split(",")
+                .filter(Boolean);
+            const labs = String(model[labelField] ?? "")
+                .split(",")
+                .filter(Boolean);
+
+            function removeAt(index: number) {
+                const v = [...vals];
+                const l = [...labs];
+                v.splice(index, 1);
+                l.splice(index, 1);
+                model[field] = v.join(",");
+                model[labelField] = l.join(",");
+                syncForm(model);
+            }
+
+            const display = h(
+                "div",
+                { class: "lf-picker-display", onClick: onPick },
+                vals.length > 0
+                    ? vals.map((v, i) =>
+                          h(
+                              ElTag,
+                              {
+                                  key: `${v}-${i}`,
+                                  size: "small",
+                                  closable: true,
+                                  onClose: (e: MouseEvent) => {
+                                      e.stopPropagation();
+                                      removeAt(i);
+                                  }
+                              },
+                              () => labs[i] || v
+                          )
+                      )
+                    : [h("span", { class: "lf-picker-placeholder" }, `请选择${schema.label}`)]
+            );
+
+            return h("div", { style: { display: "flex", gap: "8px", width: "100%", alignItems: "flex-start" } }, [
+                display,
+                h(ElButton, { type: "primary", onClick: onPick }, () => "选择")
+            ]);
+        }
 
         case "string":
         default:

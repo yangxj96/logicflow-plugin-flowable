@@ -10,28 +10,34 @@ export const UserTaskSchema: Property[] = [
         field: "flowable:assignee",
         label: "指定人",
         type: "inline",
-        component: "string",
+        component: "picker",
+        pickerType: "user",
         default: ""
     },
     {
         field: "flowable:candidateUsers",
         label: "候选人",
         type: "inline",
-        component: "string",
+        component: "picker",
+        pickerType: "user",
+        pickerMultiple: true,
         default: ""
     },
     {
         field: "flowable:candidateGroups",
         label: "候选组",
         type: "inline",
-        component: "string",
+        component: "picker",
+        pickerType: "group",
+        pickerMultiple: true,
         default: ""
     },
     {
         field: "flowable:formKey",
         label: "表单Key",
         type: "inline",
-        component: "string",
+        component: "picker",
+        pickerType: "form",
         default: ""
     },
     {
