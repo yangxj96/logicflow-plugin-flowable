@@ -254,13 +254,14 @@ function renderControl(
             }
 
             const labelField = `${field}Label`;
+            const multiple = schema.pickerMultiple ?? false;
 
             function onPick() {
                 const payload: PickerRequestPayload = {
                     pickerType: schema.pickerType!,
                     field,
                     currentValue: model[field] ?? "",
-                    multiple: schema.pickerMultiple ?? false,
+                    multiple,
                     nodeId: state.currentNode.value?.id,
                     nodeType: state.currentNode.value?.type,
                     resolve: (value: string, label?: string) => {
@@ -288,27 +289,56 @@ function renderControl(
                 syncForm(model);
             }
 
-            const display = h(
-                "div",
-                { class: "lf-picker-display", onClick: onPick },
-                vals.length > 0
-                    ? vals.map((v, i) =>
-                          h(
-                              ElTag,
-                              {
-                                  key: `${v}-${i}`,
-                                  size: "small",
-                                  closable: true,
-                                  onClose: (e: MouseEvent) => {
-                                      e.stopPropagation();
-                                      removeAt(i);
-                                  }
-                              },
-                              () => labs[i] || v
-                          )
-                      )
-                    : [h("span", { class: "lf-picker-placeholder" }, `请选择${schema.label}`)]
-            );
+            function clearAll() {
+                model[field] = "";
+                model[labelField] = "";
+                syncForm(model);
+            }
+
+            const placeholder = h("span", { class: "lf-picker-placeholder" }, `请选择${schema.label}`);
+
+            const display = multiple
+                ? h(
+                      "div",
+                      { class: "lf-picker-display", onClick: onPick },
+                      vals.length > 0
+                          ? vals.map((v, i) =>
+                                h(
+                                    ElTag,
+                                    {
+                                        key: `${v}-${i}`,
+                                        size: "small",
+                                        closable: true,
+                                        onClose: (e: MouseEvent) => {
+                                            e.stopPropagation();
+                                            removeAt(i);
+                                        }
+                                    },
+                                    () => labs[i] || v
+                                )
+                            )
+                          : [placeholder]
+                  )
+                : h(
+                      "div",
+                      { class: "lf-picker-display lf-picker-single", onClick: onPick },
+                      vals.length > 0
+                          ? [
+                                h("span", { class: "lf-picker-single-text" }, labs[0] || vals[0]),
+                                h(
+                                    "span",
+                                    {
+                                        class: "lf-picker-clear",
+                                        onClick: (e: MouseEvent) => {
+                                            e.stopPropagation();
+                                            clearAll();
+                                        }
+                                    },
+                                    "×"
+                                )
+                            ]
+                          : [placeholder]
+                  );
 
             return h("div", { style: { display: "flex", gap: "8px", width: "100%", alignItems: "flex-start" } }, [
                 display,

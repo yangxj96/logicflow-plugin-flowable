@@ -51,3 +51,37 @@
     font-size: 13px;
     line-height: 24px;
 }
+
+/* 单选展示：纯文本 + 悬停显现清除按钮 */
+.lf-picker-single {
+    justify-content: space-between;
+}
+
+.lf-picker-single-text {
+    color: var(--el-text-color-regular);
+    font-size: 13px;
+    line-height: 24px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lf-picker-clear {
+    color: var(--el-text-color-placeholder);
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    flex-shrink: 0;
+    opacity: 0;
+    transition:
+        opacity 0.2s,
+        color 0.2s;
+}
+
+.lf-picker-single:hover .lf-picker-clear {
+    opacity: 1;
+}
+
+.lf-picker-clear:hover {
+    color: var(--el-color-danger);
+}
