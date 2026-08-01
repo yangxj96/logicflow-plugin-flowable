@@ -1,0 +1,53 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "流程建模插件 · tsup watch（mise）",
+            "type": "process",
+            "command": "mise.exe",
+            "args": ["exec", "--", "pnpm", "run", "dev"],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "流程建模插件 · 构建（mise）",
+            "type": "process",
+            "command": "mise.exe",
+            "args": ["exec", "--", "pnpm", "run", "build"],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "流程建模示例 · Vite（mise）",
+            "type": "process",
+            "command": "mise.exe",
+            "args": ["exec", "--", "pnpm", "run", "dev"],
+            "options": {
+                "cwd": "${workspaceFolder}/examples"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": false
+            }
+        }
+    ]
+}

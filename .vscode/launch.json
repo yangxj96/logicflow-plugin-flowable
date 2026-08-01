@@ -1,0 +1,26 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "流程建模插件 · tsup watch（mise）",
+            "type": "node-terminal",
+            "request": "launch",
+            "command": "mise.exe exec -- pnpm run dev",
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "流程建模插件 · 构建（mise）",
+            "type": "node-terminal",
+            "request": "launch",
+            "command": "mise.exe exec -- pnpm run build",
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "流程建模示例 · Vite（mise）",
+            "type": "node-terminal",
+            "request": "launch",
+            "command": "mise.exe exec -- pnpm run dev",
+            "cwd": "${workspaceFolder}/examples"
+        }
+    ]
+}
