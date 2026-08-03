@@ -51,8 +51,8 @@
         "build": "tsup",
         "prepublishOnly": "npm run build",
         "dev": "tsup --watch",
-        "format": "prettier --write ./src",
-        "format:check": "prettier --check ./src"
+        "format": "prettier --write ./src ./scripts tsup.config.ts",
+        "format:check": "prettier --check ./src ./scripts tsup.config.ts"
     },
     "peerDependencies": {
         "@logicflow/core": "^2.1.11",

@@ -16,11 +16,7 @@ export default defineConfig({
         // 仅保留法律声明（如 MIT 许可证），用 /*! ... */ 包裹
         options.legalComments = "inline";
     },
-    external: [
-        "vue",
-        "element-plus",
-        "@logicflow/core",
-        "@logicflow/extension"
-    ]
-
+    external: ["vue", "element-plus", "@logicflow/core", "@logicflow/extension"],
+    // 将 LogicFlow 核心 CSS 与插件自身 CSS 合并为 dist/index.css
+    onSuccess: "node scripts/merge-css.mjs"
 });
