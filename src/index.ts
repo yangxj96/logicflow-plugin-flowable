@@ -1,5 +1,5 @@
 /*
- * logicflow-plugin-flowable v0.1.0
+ * logicflow-plugin-flowable v0.1.1
  * Copyright 2025 Yang XJ. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +16,10 @@
  */
 
 import FlowablePlugin from "./core";
+export type { FlowablePluginOptions } from "./core/types";
 import { toBpmnXml } from "./features/export";
 import { fromBpmnXml } from "./features/import";
+export type { ImportResult } from "./features/import";
 
 export type { PickerType, PickerRequestPayload } from "./features/schema/types";
 

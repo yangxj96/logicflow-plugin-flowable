@@ -4,6 +4,14 @@
 
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.1.1] - 2026-08-03
+
+### Fixed
+
+- 修复 DND 组件面板超出容器高度后无法滚动的问题
+- 补充插件配置、Picker 事件和 BPMN 导入结果的公共 TypeScript 类型导出
+- 移除不存在的 `FlowableDesigner` 全局类型声明
+
 ## [0.1.0] - 2026-07-26
 
 ### Changed

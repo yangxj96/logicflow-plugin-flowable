@@ -73,6 +73,7 @@ export function createDndPanel(lf: LogicFlow) {
                 h(
                     ElCard,
                     {
+                        class: "lf-dnd-card",
                         shadow: "never",
                         style: { width: "100%", height: "100%", border: "none" },
                         headerClass: "lf-dnd-header",
