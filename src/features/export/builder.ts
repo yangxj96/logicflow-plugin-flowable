@@ -1,4 +1,5 @@
 import type LogicFlow from "@logicflow/core";
+import { BpmnIdGenerator } from "../../helper/id-generator";
 import { getProcessContext } from "../context/process";
 import { ProcessSchema } from "../schema/process";
 import { getSchemaByType } from "../schema";
@@ -141,6 +142,51 @@ function getTagName(type: string): string {
 }
 
 /**
+ * 确保流程 ID 符合 XML NCName 规则。
+ *
+ * 旧上下文或热更新残留的流程 ID 可能仍是以数字开头的纯 UUID，
+ * 这类值会被 Flowable 的 BPMN XSD 校验拒绝。
+ */
+function normalizeBpmnId(id: unknown, prefix: "process" | "node" | "edge", ensurePrefix = false): string {
+    const value = String(id ?? "").trim();
+    const hasPrefix = value.startsWith(`${prefix}-`) || value.startsWith(`${prefix}_`);
+    if (/^[A-Za-z_][A-Za-z0-9_.-]*$/.test(value) && (!ensurePrefix || hasPrefix)) return value;
+
+    const suffix = value.replace(/[^A-Za-z0-9_.-]/g, "-");
+    return suffix ? `${prefix}-${suffix}` : BpmnIdGenerator.generate(prefix);
+}
+
+/**
+ * 生成不重复的 BPMN ID。
+ */
+function normalizeUniqueBpmnId(
+    id: unknown,
+    prefix: "process" | "node" | "edge",
+    usedIds: Set<string>,
+    ensurePrefix = false
+): string {
+    const base = normalizeBpmnId(id, prefix, ensurePrefix);
+    let candidate = base;
+    let suffix = 1;
+
+    while (usedIds.has(candidate)) {
+        candidate = `${base}-${suffix}`;
+        suffix += 1;
+    }
+
+    usedIds.add(candidate);
+    return candidate;
+}
+
+/**
+ * 将节点引用转换为导出后的节点 ID。
+ */
+function normalizeNodeReference(id: unknown, nodeIdMap: Map<string, string>): string {
+    const value = String(id ?? "");
+    return nodeIdMap.get(value) ?? normalizeBpmnId(value, "node", true);
+}
+
+/**
  * 获取节点/连线的完整 form 数据
  *
  * 策略：先按 schema 构建默认值，再用实际存储的 form 值覆盖。
@@ -197,8 +243,25 @@ export function toBpmnXml(lf: LogicFlow): string {
 
     // 获取流程上下文
     const process = getProcessContext(lf);
+    const usedIds = new Set<string>();
+    const processId = normalizeUniqueBpmnId(process.id, "process", usedIds);
+    process.id = processId;
+
+    const nodeIdMap = new Map<string, string>();
+    const normalizedNodes = nodes.map(node => {
+        const originalId = String(node.id ?? "");
+        const id = normalizeUniqueBpmnId(originalId, "node", usedIds, true);
+        if (originalId) nodeIdMap.set(originalId, id);
+        return { ...node, id };
+    });
+    const normalizedEdges = edges.map(edge => ({
+        ...edge,
+        id: normalizeUniqueBpmnId(edge.id, "edge", usedIds, true),
+        sourceNodeId: normalizeNodeReference(edge.sourceNodeId, nodeIdMap),
+        targetNodeId: normalizeNodeReference(edge.targetNodeId, nodeIdMap)
+    }));
     const processForm: Record<string, any> = {
-        id: process.id,
+        id: processId,
         name: process.name,
         category: process.category ?? "",
         documentation: process.documentation ?? "",
@@ -235,7 +298,7 @@ export function toBpmnXml(lf: LogicFlow): string {
     }
 
     // 节点
-    for (const node of nodes) {
+    for (const node of normalizedNodes) {
         const tagName = getTagName(node.type);
         if (!tagName || tagName === "sequenceFlow") continue;
 
@@ -246,7 +309,7 @@ export function toBpmnXml(lf: LogicFlow): string {
     }
 
     // 连线
-    for (const edge of edges) {
+    for (const edge of normalizedEdges) {
         const tagName = getTagName(edge.type);
         if (!tagName) continue;
 
@@ -266,7 +329,7 @@ export function toBpmnXml(lf: LogicFlow): string {
 
     // BPMN DI（位置信息）
     lines.push("");
-    lines.push(buildBpmnDi(processForm.id, nodes, edges));
+    lines.push(buildBpmnDi(processForm.id, normalizedNodes, normalizedEdges));
 
     // 关闭 definitions
     lines.push(`</definitions>`);

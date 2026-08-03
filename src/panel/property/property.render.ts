@@ -12,6 +12,7 @@ import {
     ElTag
 } from "element-plus";
 import { NODE_TYPE_NAMES } from "../../core/constants";
+import { getProcessContext } from "../../features/context/process";
 import { getSchemaByType } from "../../features/schema";
 import { ProcessSchema } from "../../features/schema";
 import { PickerRequestPayload, Property, PropertyComponent } from "../../features/schema/types";
@@ -176,6 +177,13 @@ function renderControl(
      */
     function onUpdate(val: any) {
         model[field] = val;
+
+        // 流程表单使用的是响应式快照，编辑时需要同步回 LogicFlow 上的真实上下文，
+        // 导出 BPMN XML 和后续流程操作才能读取到最新值。
+        if (state.mode.value === "process") {
+            (getProcessContext(state.lf) as Record<string, any>)[field] = val;
+            return;
+        }
 
         // name 字段：立即更新节点显示文本（所有节点类型通用）
         if (field === "name" && state.mode.value !== "process") {

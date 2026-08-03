@@ -15,7 +15,9 @@ export function usePropertyPanel(lf: LogicFlow, pickers: PickerType[]): Property
     // 模式
     const mode = ref<"node" | "edge" | "process">("process");
     // 流程
-    const process = ref<ProcessModel>(getProcessContext(lf));
+    // 使用快照作为面板模型，导入 XML 后通过 process:change 事件刷新，
+    // 避免直接修改 LogicFlow 上的原始上下文时无法触发 Vue 响应式更新。
+    const process = ref<ProcessModel>({ ...getProcessContext(lf) });
     // 表单信息
     const formRef = ref<FormInstance>();
     // 当前节点

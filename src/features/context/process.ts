@@ -11,7 +11,8 @@ export const PROCESS_CONTEXT = Symbol("logicflow-plugin-flowable:process");
 export function initProcessContext(lf: LogicFlow) {
     if ((lf as any)[PROCESS_CONTEXT]) return;
     (lf as any)[PROCESS_CONTEXT] = {
-        id: BpmnIdGenerator.generate(),
+        // BPMN 的 id 必须符合 XML NCName，不能以数字开头。
+        id: BpmnIdGenerator.generate("process"),
         name: "新建流程",
         isExecutable: true
     } as ProcessModel;

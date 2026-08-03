@@ -1,6 +1,7 @@
 import { PropertyEventOptions } from "./types";
 import { getSchemaByType } from "../../features/schema";
 import { Property } from "../../features/schema/types";
+import { getProcessContext } from "../../features/context/process";
 
 /**
  * 注册属性面板相关事件
@@ -34,6 +35,14 @@ export function registerPropertyEvents(options: PropertyEventOptions) {
             state.mode.value = "process";
             state.currentNode.value = undefined;
             state.currentEdge.value = undefined;
+        });
+    });
+
+    // 流程 XML 导入后刷新流程属性面板。
+    // 导入逻辑更新的是 LogicFlow 上的原始上下文对象，不能依赖 Vue 自动追踪该变更。
+    lf.on("process:change", () => {
+        run(() => {
+            state.process.value = { ...getProcessContext(lf) };
         });
     });
 

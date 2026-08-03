@@ -52,6 +52,9 @@ export function fromBpmnXml(xmlString: string, lf: LogicFlow): ImportResult {
     ctx.id = processId;
     ctx.name = processName;
     ctx.isExecutable = isExecutable;
+    // 通知属性面板刷新流程级表单。上下文对象本身不是 Vue 响应式对象，
+    // 仅修改字段不会触发已经挂载的属性面板更新。
+    lf.emit("process:change", { data: { ...ctx } });
 
     // 5. 收集所有流程元素
     const nodes: any[] = [];

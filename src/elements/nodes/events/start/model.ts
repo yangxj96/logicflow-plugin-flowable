@@ -37,14 +37,14 @@ export class StartEventModel extends CircleNodeModel implements PropertyMethod {
 
         // 如果导入时已经提供了 form 数据，不再重新构建
         if ((data.properties as any)?.form) {
-            data.id = data.id || BpmnIdGenerator.generate();
+            data.id = data.id || BpmnIdGenerator.generate("node");
             data.properties = data.properties || {};
             (data.properties as any).schemas = (data.properties as any).schemas || this.getSchemas();
             return;
         }
 
         // 初始化赋值
-        data.id = BpmnIdGenerator.generate();
+        data.id = BpmnIdGenerator.generate("node");
         data.text = NODE_TYPE_NAMES[this.type];
 
         // form构建
