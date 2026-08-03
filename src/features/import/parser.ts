@@ -86,12 +86,14 @@ export function fromBpmnXml(xmlString: string, lf: LogicFlow): ImportResult {
     } else {
         autoLayout(nodes);
     }
+    applyEdgeWaypoints(edges, diPositions);
 
     // 7. 渲染到画布
     lf.render({
         nodes: nodes,
         edges: edges
     });
+    alignImportedEdgeEndpoints(lf, edges);
 
     return {
         success: true,
@@ -268,44 +270,82 @@ function parseSequenceFlow(el: Element, usedIds: Set<string>): any | null {
 /**
  * 从 BPMN DI 段读取节点位置
  */
-function readBpmnDi(definitions: Element, _processId: string): { shapes: Map<string, { x: number; y: number }> } {
-    const shapes = new Map<string, { x: number; y: number }>();
+type BpmnPoint = { x: number; y: number };
+
+interface BpmnDiPositions {
+    shapes: Map<string, { x: number; y: number; width: number; height: number }>;
+    edges: Map<string, BpmnPoint[]>;
+}
+
+/**
+ * 读取 BPMN DI 中的节点位置和连线路径点。
+ *
+ * BPMNEdge 的 bpmnElement 指向 process 中的 sequenceFlow id，
+ * di:waypoint 则描述了编辑器保存的实际折线路径。
+ */
+function readBpmnDi(definitions: Element, _processId: string): BpmnDiPositions {
+    const shapes = new Map<string, { x: number; y: number; width: number; height: number }>();
+    const edges = new Map<string, BpmnPoint[]>();
 
     const diagram = findChildElement(definitions, "BPMNDiagram");
-    if (!diagram) return { shapes };
+    if (!diagram) return { shapes, edges };
 
     const plane = findChildElement(diagram, "BPMNPlane");
-    if (!plane) return { shapes };
+    if (!plane) return { shapes, edges };
 
     for (const child of plane.children) {
-        if (child.localName !== "BPMNShape") continue;
+        if (child.localName === "BPMNShape") {
+            const bpmnElement = child.getAttribute("bpmnElement");
+            if (!bpmnElement) continue;
+
+            const bounds = findChildElement(child, "Bounds");
+            if (!bounds) continue;
+
+            const x = parseFloat(bounds.getAttribute("x") ?? "0");
+            const y = parseFloat(bounds.getAttribute("y") ?? "0");
+            const width = parseFloat(bounds.getAttribute("width") ?? "0");
+            const height = parseFloat(bounds.getAttribute("height") ?? "0");
+
+            if (!isNaN(x) && !isNaN(y) && width > 0 && height > 0) {
+                shapes.set(bpmnElement, { x, y, width, height });
+            }
+            continue;
+        }
+
+        if (child.localName !== "BPMNEdge") continue;
 
         const bpmnElement = child.getAttribute("bpmnElement");
         if (!bpmnElement) continue;
 
-        const bounds = findChildElement(child, "Bounds");
-        if (!bounds) continue;
+        const waypoints = Array.from(child.children)
+            .filter(waypoint => waypoint.localName === "waypoint")
+            .map(waypoint => ({
+                x: parseFloat(waypoint.getAttribute("x") ?? ""),
+                y: parseFloat(waypoint.getAttribute("y") ?? "")
+            }))
+            .filter(point => !isNaN(point.x) && !isNaN(point.y));
 
-        const x = parseFloat(bounds.getAttribute("x") ?? "0");
-        const y = parseFloat(bounds.getAttribute("y") ?? "0");
-
-        if (!isNaN(x) && !isNaN(y)) {
-            shapes.set(bpmnElement, { x, y });
+        if (waypoints.length >= 2) {
+            edges.set(bpmnElement, waypoints);
         }
     }
 
-    return { shapes };
+    return { shapes, edges };
 }
 
 /**
  * 将 DI 位置应用到节点上
  */
-function applyPositions(nodes: any[], di: { shapes: Map<string, { x: number; y: number }> }): void {
+function applyPositions(
+    nodes: any[],
+    di: { shapes: Map<string, { x: number; y: number; width: number; height: number }> }
+): void {
     for (const node of nodes) {
         const pos = di.shapes.get(node.id);
         if (pos) {
-            node.x = pos.x;
-            node.y = pos.y;
+            // BPMN Bounds 使用左上角坐标，LogicFlow 节点使用中心点坐标。
+            node.x = pos.x + pos.width / 2;
+            node.y = pos.y + pos.height / 2;
         }
     }
     // 没有 DI 位置的节点使用简单偏移
@@ -316,6 +356,67 @@ function applyPositions(nodes: any[], di: { shapes: Map<string, { x: number; y: 
             node.y = offsetY;
             offsetY += 120;
         }
+    }
+}
+
+/**
+ * 将 BPMN DI 的连线路径恢复到 LogicFlow edge.pointsList。
+ */
+function applyEdgeWaypoints(edges: any[], di: BpmnDiPositions): void {
+    for (const edge of edges) {
+        const waypoints = di.edges.get(edge.id);
+        if (!waypoints) continue;
+
+        edge.pointsList = waypoints.map(point => ({
+            x: point.x,
+            y: point.y
+        }));
+    }
+}
+
+/**
+ * 将已恢复路径的首尾点对齐到 LogicFlow 实际计算出的节点锚点。
+ *
+ * BPMN DI 的 waypoint 通常基于 BPMN 元素尺寸，而插件节点可能使用不同的
+ * 图形尺寸。若直接使用原始首尾点，边虽然已经绘制出来，但箭头可能落在
+ * 节点图形内部，直到移动节点触发 LogicFlow 重算后才显示。
+ */
+function alignImportedEdgeEndpoints(lf: LogicFlow, importedEdges: any[]): void {
+    const graphModel = (lf as any).graphModel;
+    if (!graphModel) return;
+
+    const importedEdgeIds = new Set(
+        importedEdges.filter(edge => Array.isArray(edge.pointsList) && edge.pointsList.length >= 2).map(edge => edge.id)
+    );
+
+    for (const edgeModel of graphModel.edges ?? []) {
+        if (!importedEdgeIds.has(edgeModel.id)) continue;
+        if (
+            !edgeModel.startPoint ||
+            !edgeModel.endPoint ||
+            !Array.isArray(edgeModel.pointsList) ||
+            edgeModel.pointsList.length < 2
+        )
+            continue;
+
+        const points = edgeModel.pointsList.map((point: BpmnPoint) => ({
+            x: point.x,
+            y: point.y
+        }));
+        points[0] = { x: edgeModel.startPoint.x, y: edgeModel.startPoint.y };
+        points[points.length - 1] = { x: edgeModel.endPoint.x, y: edgeModel.endPoint.y };
+
+        const normalizedPoints =
+            typeof edgeModel.orthogonalizePath === "function" ? edgeModel.orthogonalizePath(points) : points;
+        const path =
+            typeof edgeModel.getPath === "function"
+                ? edgeModel.getPath(normalizedPoints)
+                : normalizedPoints.map((point: BpmnPoint) => `${point.x},${point.y}`).join(" ");
+
+        edgeModel.updateAttributes({
+            pointsList: normalizedPoints,
+            points: path
+        });
     }
 }
 
