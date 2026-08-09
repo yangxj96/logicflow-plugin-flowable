@@ -1,4 +1,5 @@
 import { h, RectNode } from "@logicflow/core";
+import { getDisplayName } from "../../../../core/domain-types";
 
 /**
  * 调用活动视图 — 粗边框圆角矩形
@@ -10,7 +11,7 @@ export class CallActivityView extends RectNode {
 
     getShape() {
         const { x, y, width, height, properties } = this.props.model;
-        const textVal = (properties as any)?.form?.name || (properties as any)?.name || "";
+        const textVal = getDisplayName(properties, "");
 
         return h("g", {}, [
             h("rect", {

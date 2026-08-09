@@ -5,6 +5,7 @@ import { ProcessSchema } from "../schema/process";
 import { getSchemaByType } from "../schema";
 import { Property } from "../schema/types";
 import { BPMN_ELEMENT_TAGS } from "./types";
+import { BpmnProperties, FormModel, getTextValue } from "../../core/domain-types";
 
 /** BPMN 2.0 / Flowable 命名空间 */
 const BPMN_NS = "http://www.omg.org/spec/BPMN/20100524/MODEL";
@@ -39,7 +40,7 @@ function isFlowableField(field: string): boolean {
 /**
  * 构建 BPMN 元素的属性字符串（仅 inline 类型）
  */
-function buildAttributes(form: Record<string, any>, schemas: Property[]): string {
+function buildAttributes(form: FormModel, schemas: Property[]): string {
     const parts: string[] = [];
 
     // sourceRef / targetRef 由 extraAttrs 单独处理，避免重复
@@ -72,7 +73,7 @@ function buildAttributes(form: Record<string, any>, schemas: Property[]): string
 /**
  * 构建 children 类型的子元素 XML
  */
-function buildChildren(form: Record<string, any>, schemas: Property[], level: number): string {
+function buildChildren(form: FormModel, schemas: Property[], level: number): string {
     const lines: string[] = [];
 
     // 事件定义字段列表（输出为空元素）
@@ -192,10 +193,10 @@ function normalizeNodeReference(id: unknown, nodeIdMap: Map<string, string>): st
  * 策略：先按 schema 构建默认值，再用实际存储的 form 值覆盖。
  * 这样无论 properties.form 是否存在、是否完整，都能导出正确的用户修改值。
  */
-function getFormData(data: any, schemas: Property[]): Record<string, any> {
+function getFormData(data: LogicFlow.NodeData | LogicFlow.EdgeData, schemas: Property[]): FormModel {
     // 1. 从 schema 构建完整默认值（确保所有属性字段都存在）
-    const form: Record<string, any> = {};
-    const rawText = typeof data.text === "object" ? (data.text as any)?.value : data.text;
+    const form: FormModel = {};
+    const rawText = getTextValue(data.text);
 
     for (const schema of schemas) {
         if (schema.field === "id") {
@@ -208,7 +209,7 @@ function getFormData(data: any, schemas: Property[]): Record<string, any> {
     }
 
     // 2. 用实际存储的 form 值覆盖（用户修改过的值优先）
-    const storedForm = data.properties?.form as Record<string, any> | undefined;
+    const storedForm = (data.properties as BpmnProperties | undefined)?.form;
     if (storedForm) {
         for (const key of Object.keys(storedForm)) {
             if (storedForm[key] != null && storedForm[key] !== "") {
@@ -229,17 +230,9 @@ function getFormData(data: any, schemas: Property[]): Record<string, any> {
  */
 export function toBpmnXml(lf: LogicFlow): string {
     // 直接从 graphModel 的 model 实例获取最新数据（包含用户通过属性面板修改的 properties.form）
-    const graphModel = (lf as any).graphModel;
-    const nodes: any[] = [];
-    const edges: any[] = [];
-    if (graphModel) {
-        for (const model of graphModel.nodes ?? []) {
-            nodes.push(typeof model.getData === "function" ? model.getData() : model);
-        }
-        for (const model of graphModel.edges ?? []) {
-            edges.push(typeof model.getData === "function" ? model.getData() : model);
-        }
-    }
+    const graphModel = lf.graphModel;
+    const nodes = graphModel.nodes.map(model => model.getData());
+    const edges = graphModel.edges.map(model => model.getData());
 
     // 获取流程上下文
     const process = getProcessContext(lf);
@@ -260,7 +253,7 @@ export function toBpmnXml(lf: LogicFlow): string {
         sourceNodeId: normalizeNodeReference(edge.sourceNodeId, nodeIdMap),
         targetNodeId: normalizeNodeReference(edge.targetNodeId, nodeIdMap)
     }));
-    const processForm: Record<string, any> = {
+    const processForm: FormModel = {
         id: processId,
         name: process.name,
         category: process.category ?? "",
@@ -329,7 +322,7 @@ export function toBpmnXml(lf: LogicFlow): string {
 
     // BPMN DI（位置信息）
     lines.push("");
-    lines.push(buildBpmnDi(processForm.id, normalizedNodes, normalizedEdges));
+    lines.push(buildBpmnDi(processId, normalizedNodes, normalizedEdges));
 
     // 关闭 definitions
     lines.push(`</definitions>`);
@@ -341,7 +334,7 @@ export function toBpmnXml(lf: LogicFlow): string {
 /**
  * 构建 BPMN DI 段（节点坐标 + 连线路径点）
  */
-function buildBpmnDi(processId: string, nodes: any[], edges: any[]): string {
+function buildBpmnDi(processId: string, nodes: LogicFlow.NodeData[], edges: LogicFlow.EdgeData[]): string {
     const lines: string[] = [];
     lines.push(`${indent(1)}<bpmndi:BPMNDiagram>`);
     lines.push(`${indent(2)}<bpmndi:BPMNPlane bpmnElement="${escapeXml(processId)}">`);
@@ -353,8 +346,8 @@ function buildBpmnDi(processId: string, nodes: any[], edges: any[]): string {
 
         const x = Math.round(node.x ?? 0);
         const y = Math.round(node.y ?? 0);
-        const w = node.width ?? 120;
-        const h = node.height ?? 70;
+        const w = typeof node.width === "number" ? node.width : 120;
+        const h = typeof node.height === "number" ? node.height : 70;
 
         lines.push(
             `${indent(3)}<bpmndi:BPMNShape id="shape-${escapeXml(node.id)}" bpmnElement="${escapeXml(node.id)}">`
@@ -368,14 +361,18 @@ function buildBpmnDi(processId: string, nodes: any[], edges: any[]): string {
         const tagName = getTagName(edge.type);
         if (!tagName) continue;
 
-        const source = nodes.find((n: any) => n.id === edge.sourceNodeId);
-        const target = nodes.find((n: any) => n.id === edge.targetNodeId);
+        const source = nodes.find(node => node.id === edge.sourceNodeId);
+        const target = nodes.find(node => node.id === edge.targetNodeId);
 
         if (source && target) {
-            const sx = Math.round((source.x ?? 0) + (source.width ?? 120) / 2);
-            const sy = Math.round((source.y ?? 0) + (source.height ?? 70) / 2);
-            const tx = Math.round((target.x ?? 0) + (target.width ?? 120) / 2);
-            const ty = Math.round((target.y ?? 0) + (target.height ?? 70) / 2);
+            const sourceWidth = typeof source.width === "number" ? source.width : 120;
+            const sourceHeight = typeof source.height === "number" ? source.height : 70;
+            const targetWidth = typeof target.width === "number" ? target.width : 120;
+            const targetHeight = typeof target.height === "number" ? target.height : 70;
+            const sx = Math.round((source.x ?? 0) + sourceWidth / 2);
+            const sy = Math.round((source.y ?? 0) + sourceHeight / 2);
+            const tx = Math.round((target.x ?? 0) + targetWidth / 2);
+            const ty = Math.round((target.y ?? 0) + targetHeight / 2);
 
             lines.push(
                 `${indent(3)}<bpmndi:BPMNEdge id="edge-${escapeXml(edge.id)}" bpmnElement="${escapeXml(edge.id)}">`
@@ -397,7 +394,7 @@ function buildBpmnDi(processId: string, nodes: any[], edges: any[]): string {
  */
 function buildElement(
     tagName: string,
-    form: Record<string, any>,
+    form: FormModel,
     schemas: Property[],
     level: number,
     extraAttrs?: string

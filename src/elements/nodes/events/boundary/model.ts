@@ -1,5 +1,6 @@
-import LogicFlow, { CircleNodeModel } from "@logicflow/core";
+import LogicFlow, { CircleNodeModel, GraphModel } from "@logicflow/core";
 import { NODE_TYPES } from "../../../../core/constants";
+import { BpmnProperties } from "../../../../core/domain-types";
 import { createConnectRules, getNodeBehavior } from "../../../../features/behaviors";
 
 /**
@@ -10,7 +11,7 @@ import { createConnectRules, getNodeBehavior } from "../../../../features/behavi
 export class BoundaryEventModel extends CircleNodeModel {
     static readonly type = NODE_TYPES.BOUNDARY_EVENT;
 
-    constructor(data: any, graphModel: any) {
+    constructor(data: LogicFlow.NodeConfig, graphModel: GraphModel) {
         super(data, graphModel);
         this.r = 22;
         this.resizable = false;
@@ -25,7 +26,7 @@ export class BoundaryEventModel extends CircleNodeModel {
     initNodeData(data: LogicFlow.NodeConfig) {
         super.initNodeData(data);
 
-        if ((data.properties as any)?.form) return;
+        if ((data.properties as BpmnProperties | undefined)?.form) return;
     }
 
     private applyConnectRules(): void {

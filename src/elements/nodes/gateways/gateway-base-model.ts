@@ -1,11 +1,11 @@
-import { DiamondNodeModel } from "@logicflow/core";
+import LogicFlow, { DiamondNodeModel, GraphModel } from "@logicflow/core";
 import { createConnectRules, getNodeBehavior } from "../../../features/behaviors";
 
 /**
  * 网关通用基类模型
  */
 export class GatewayBaseModel extends DiamondNodeModel {
-    constructor(data: any, graphModel: any) {
+    constructor(data: LogicFlow.NodeConfig, graphModel: GraphModel) {
         super(data, graphModel);
 
         this.resizable = false;
@@ -17,7 +17,7 @@ export class GatewayBaseModel extends DiamondNodeModel {
         this.applyConnectRules();
     }
 
-    override initNodeData(data: any) {
+    override initNodeData(data: LogicFlow.NodeConfig) {
         super.initNodeData(data);
 
         this.setProperties({

@@ -1,4 +1,4 @@
-import { PolylineEdgeModel } from "@logicflow/core";
+import LogicFlow, { GraphModel, PolylineEdgeModel } from "@logicflow/core";
 import { NODE_TYPES } from "../../../core/constants";
 
 /**
@@ -7,7 +7,7 @@ import { NODE_TYPES } from "../../../core/constants";
 export class SequenceFlowModel extends PolylineEdgeModel {
     static readonly type = NODE_TYPES.SEQUENCE_FLOW;
 
-    constructor(data: any, graphModel: any) {
+    constructor(data: LogicFlow.EdgeConfig, graphModel: GraphModel) {
         super(data, graphModel);
     }
 }

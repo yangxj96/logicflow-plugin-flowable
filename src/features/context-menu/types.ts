@@ -1,4 +1,5 @@
 import type LogicFlow from "@logicflow/core";
+import type { FlowElementData } from "../../core/domain-types";
 
 /**
  * 上下文菜单Item
@@ -18,7 +19,7 @@ export interface ContextMenuItem {
 export interface MenuContext {
     lf: LogicFlow;
     type: "node" | "edge" | "blank";
-    data?: any;
+    data?: FlowElementData;
 }
 
 /**

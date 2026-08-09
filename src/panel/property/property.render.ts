@@ -17,6 +17,7 @@ import { getSchemaByType } from "../../features/schema";
 import { ProcessSchema } from "../../features/schema";
 import { PickerRequestPayload, Property, PropertyComponent } from "../../features/schema/types";
 import { PropertyPanelState } from "./types";
+import { BpmnProperties, FormModel } from "../../core/domain-types";
 
 /**
  * 创建属性面板渲染上下文（在 setup 中调用，创建 computed 等响应式对象）
@@ -27,7 +28,7 @@ import { PropertyPanelState } from "./types";
 function createFormSync(state: PropertyPanelState) {
     let timer: ReturnType<typeof setTimeout> | null = null;
 
-    return function syncForm(model: Record<string, any>) {
+    return function syncForm(model: FormModel) {
         if (state.mode.value === "process") return;
         const targetId = state.mode.value === "node" ? state.currentNode.value?.id : state.currentEdge.value?.id;
         if (!targetId) return;
@@ -81,15 +82,15 @@ export function usePropertyRender(state: PropertyPanelState) {
     });
 
     // 当前表单数据对象
-    const currentModel = computed<Record<string, any>>(() => {
+    const currentModel = computed<FormModel>(() => {
         if (state.mode.value === "process") {
-            return state.process.value as unknown as Record<string, any>;
+            return state.process.value as unknown as FormModel;
         }
         if (state.mode.value === "node" && state.currentNode.value) {
-            return state.currentNode.value.properties?.form ?? {};
+            return (state.currentNode.value.properties as BpmnProperties | undefined)?.form ?? {};
         }
         if (state.mode.value === "edge" && state.currentEdge.value) {
-            return state.currentEdge.value.properties?.form ?? {};
+            return (state.currentEdge.value.properties as BpmnProperties | undefined)?.form ?? {};
         }
         return {};
     });
@@ -134,9 +135,9 @@ export function usePropertyRender(state: PropertyPanelState) {
  */
 function renderFormItem(
     schema: Property,
-    model: Record<string, any>,
+    model: FormModel,
     state: PropertyPanelState,
-    syncForm: (m: Record<string, any>) => void
+    syncForm: (m: FormModel) => void
 ): VNode {
     const field = schema.field;
 
@@ -165,9 +166,9 @@ function renderFormItem(
  */
 function renderControl(
     schema: Property,
-    model: Record<string, any>,
+    model: FormModel,
     state: PropertyPanelState,
-    syncForm: (m: Record<string, any>) => void
+    syncForm: (m: FormModel) => void
 ): VNode {
     const field = schema.field;
     const component = schema.component as PropertyComponent;
@@ -175,13 +176,13 @@ function renderControl(
     /**
      * 表单值更新回调 — 更新内存 form、同步节点文本、防抖持久化到模型
      */
-    function onUpdate(val: any) {
+    function onUpdate(val: unknown) {
         model[field] = val;
 
         // 流程表单使用的是响应式快照，编辑时需要同步回 LogicFlow 上的真实上下文，
         // 导出 BPMN XML 和后续流程操作才能读取到最新值。
         if (state.mode.value === "process") {
-            (getProcessContext(state.lf) as Record<string, any>)[field] = val;
+            (getProcessContext(state.lf) as unknown as FormModel)[field] = val;
             return;
         }
 
@@ -190,7 +191,7 @@ function renderControl(
             const targetId = state.mode.value === "node" ? state.currentNode.value?.id : state.currentEdge.value?.id;
             if (targetId) {
                 try {
-                    state.lf.updateText(targetId, val ?? "");
+                    state.lf.updateText(targetId, String(val ?? ""));
                 } catch {
                     // 忽略
                 }
@@ -203,7 +204,7 @@ function renderControl(
     switch (component) {
         case "textarea":
             return h(ElInput, {
-                modelValue: model[field],
+                modelValue: String(model[field] ?? ""),
                 type: "textarea",
                 rows: 3,
                 placeholder: `请输入${schema.label}`,
@@ -222,16 +223,14 @@ function renderControl(
         case "boolean":
             return h(ElSwitch, {
                 modelValue: toBoolean(model[field]),
-                "onUpdate:modelValue": (val: string | number | boolean) => {
-                    model[field] = String(val);
-                }
+                "onUpdate:modelValue": (val: string | number | boolean) => onUpdate(String(val))
             });
 
         case "select":
             return h(
                 ElSelect,
                 {
-                    modelValue: model[field],
+                    modelValue: String(model[field] ?? ""),
                     placeholder: `请选择${schema.label}`,
                     style: { width: "100%" },
                     "onUpdate:modelValue": onUpdate
@@ -244,7 +243,7 @@ function renderControl(
 
         case "expression":
             return h(ElInput, {
-                modelValue: model[field],
+                modelValue: String(model[field] ?? ""),
                 placeholder: `请输入${schema.label}（支持表达式）`,
                 "onUpdate:modelValue": onUpdate
             });
@@ -254,7 +253,7 @@ function renderControl(
 
             if (!enabled) {
                 return h(ElInput, {
-                    modelValue: model[field],
+                    modelValue: String(model[field] ?? ""),
                     placeholder: `请输入${schema.label}`,
                     clearable: true,
                     "onUpdate:modelValue": onUpdate
@@ -268,7 +267,7 @@ function renderControl(
                 const payload: PickerRequestPayload = {
                     pickerType: schema.pickerType!,
                     field,
-                    currentValue: model[field] ?? "",
+                    currentValue: String(model[field] ?? ""),
                     multiple,
                     nodeId: state.currentNode.value?.id,
                     nodeType: state.currentNode.value?.type,
@@ -357,7 +356,7 @@ function renderControl(
         case "string":
         default:
             return h(ElInput, {
-                modelValue: model[field],
+                modelValue: String(model[field] ?? ""),
                 placeholder: `请输入${schema.label}`,
                 clearable: true,
                 "onUpdate:modelValue": onUpdate
@@ -368,7 +367,7 @@ function renderControl(
 /**
  * 将值转为布尔
  */
-function toBoolean(val: any): boolean {
+function toBoolean(val: unknown): boolean {
     if (typeof val === "boolean") return val;
     if (val === "true" || val === "1") return true;
     return false;

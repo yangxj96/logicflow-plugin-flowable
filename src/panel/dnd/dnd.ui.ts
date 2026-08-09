@@ -19,7 +19,7 @@ export function createDndPanel(lf: LogicFlow) {
             const activeNames = computed(() => groups.value.map(g => g.group));
 
             // 开始拖拽
-            function startDrag(node: any, e: MouseEvent) {
+            function startDrag(node: DndNodeMeta, e: MouseEvent) {
                 e.preventDefault();
                 if (!state.lf) return;
 
@@ -30,7 +30,7 @@ export function createDndPanel(lf: LogicFlow) {
             }
 
             // 提取单个网格项的渲染逻辑
-            const renderGridItem = (node: any, groupName: string) => {
+            const renderGridItem = (node: DndNodeMeta, groupName: string) => {
                 return h(
                     "div",
                     {
@@ -51,7 +51,7 @@ export function createDndPanel(lf: LogicFlow) {
             };
 
             // 提取折叠面板每一项的渲染逻辑
-            const renderCollapseItem = (group: any) => {
+            const renderCollapseItem = (group: { group: string; items: DndNodeMeta[] }) => {
                 return h(
                     ElCollapseItem,
                     {

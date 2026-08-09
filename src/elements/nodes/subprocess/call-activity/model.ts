@@ -1,5 +1,6 @@
-import LogicFlow, { RectNodeModel } from "@logicflow/core";
+import LogicFlow, { GraphModel, RectNodeModel } from "@logicflow/core";
 import { NODE_TYPES } from "../../../../core/constants";
+import { BpmnProperties } from "../../../../core/domain-types";
 import { createConnectRules, getNodeBehavior } from "../../../../features/behaviors";
 
 /**
@@ -8,7 +9,7 @@ import { createConnectRules, getNodeBehavior } from "../../../../features/behavi
 export class CallActivityModel extends RectNodeModel {
     static readonly type = NODE_TYPES.CALL_ACTIVITY;
 
-    constructor(data: any, graphModel: any) {
+    constructor(data: LogicFlow.NodeConfig, graphModel: GraphModel) {
         super(data, graphModel);
         this.width = 120;
         this.height = 70;
@@ -21,7 +22,7 @@ export class CallActivityModel extends RectNodeModel {
 
     initNodeData(data: LogicFlow.NodeConfig) {
         super.initNodeData(data);
-        if ((data.properties as any)?.form) return;
+        if ((data.properties as BpmnProperties | undefined)?.form) return;
     }
 
     private applyConnectRules(): void {

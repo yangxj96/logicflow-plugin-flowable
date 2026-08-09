@@ -8,6 +8,14 @@ import { registerPropertyPanel } from "../panel/property";
 import { initProcessContext } from "../features/context/process";
 import { initElements } from "../elements";
 
+type LogicFlowWithGraphModel = LogicFlowCore & {
+    graphModel?: {
+        editConfigModel?: {
+            allowResize?: boolean;
+        };
+    };
+};
+
 /**
  * 插件注册
  */
@@ -94,7 +102,7 @@ export default class FlowablePlugin {
         this.lf.setDefaultEdgeType(NODE_TYPES.SEQUENCE_FLOW);
 
         // 启用节点缩放（子流程等容器节点需要缩放手柄）
-        const graphModel = (this.lf as any).graphModel;
+        const graphModel = (this.lf as unknown as LogicFlowWithGraphModel).graphModel;
         if (graphModel?.editConfigModel) {
             graphModel.editConfigModel.allowResize = true;
         }

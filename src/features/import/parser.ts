@@ -4,6 +4,30 @@ import { Property } from "../schema/types";
 import { XML_TAG_TO_TYPE, VALID_FLOW_ELEMENTS, ImportResult } from "./types";
 import { getProcessContext } from "../context/process";
 import { BpmnIdGenerator } from "../../helper/id-generator";
+import { BpmnProperties, FormModel } from "../../core/domain-types";
+
+interface ImportedNode extends Omit<LogicFlow.NodeConfig<BpmnProperties>, "x" | "y"> {
+    id: string;
+    x?: number;
+    y?: number;
+    width?: number;
+    height?: number;
+}
+
+interface ImportedEdge extends LogicFlow.EdgeConfig<BpmnProperties> {
+    id: string;
+    type: string;
+}
+
+interface AdjustableEdgeModel {
+    id: string;
+    startPoint?: BpmnPoint;
+    endPoint?: BpmnPoint;
+    pointsList?: BpmnPoint[];
+    orthogonalizePath?: (points: BpmnPoint[]) => BpmnPoint[];
+    getPath?: (points: BpmnPoint[]) => string;
+    updateAttributes: (attributes: { pointsList: BpmnPoint[]; points: string }) => void;
+}
 
 /** BPMN 命名空间 */
 const BPMN_NS = "http://www.omg.org/spec/BPMN/20100524/MODEL";
@@ -57,8 +81,8 @@ export function fromBpmnXml(xmlString: string, lf: LogicFlow): ImportResult {
     lf.emit("process:change", { data: { ...ctx } });
 
     // 5. 收集所有流程元素
-    const nodes: any[] = [];
-    const edges: any[] = [];
+    const nodes: ImportedNode[] = [];
+    const edges: ImportedEdge[] = [];
     const usedIds = new Set<string>();
 
     for (const el of processEl.children) {
@@ -90,8 +114,8 @@ export function fromBpmnXml(xmlString: string, lf: LogicFlow): ImportResult {
 
     // 7. 渲染到画布
     lf.render({
-        nodes: nodes,
-        edges: edges
+        nodes: nodes as LogicFlow.NodeConfig[],
+        edges
     });
     alignImportedEdgeEndpoints(lf, edges);
 
@@ -99,7 +123,7 @@ export function fromBpmnXml(xmlString: string, lf: LogicFlow): ImportResult {
         success: true,
         message: `成功导入流程 "${processName}"，共 ${nodes.length} 个节点、${edges.length} 条连线`,
         processName,
-        nodes,
+        nodes: nodes as LogicFlow.NodeConfig[],
         edges
     };
 }
@@ -144,7 +168,7 @@ function findProcessElement(definitions: Element): Element | null {
 /**
  * 解析单个流程节点
  */
-function parseFlowNode(el: Element, tagName: string, usedIds: Set<string>): any | null {
+function parseFlowNode(el: Element, tagName: string, usedIds: Set<string>): ImportedNode | null {
     const type = XML_TAG_TO_TYPE[tagName];
     if (!type) return null;
 
@@ -160,7 +184,7 @@ function parseFlowNode(el: Element, tagName: string, usedIds: Set<string>): any 
 
     // 构建 form 数据
     const schemas = getSchemaByType(type);
-    const form: Record<string, any> = {};
+    const form: FormModel = {};
 
     if (schemas.length > 0) {
         // 先填充默认值
@@ -225,7 +249,7 @@ function findChildElement(parent: Element, localName: string): Element | null {
 /**
  * 解析 sequenceFlow
  */
-function parseSequenceFlow(el: Element, usedIds: Set<string>): any | null {
+function parseSequenceFlow(el: Element, usedIds: Set<string>): ImportedEdge | null {
     const sourceRef = el.getAttribute("sourceRef");
     const targetRef = el.getAttribute("targetRef");
 
@@ -239,7 +263,7 @@ function parseSequenceFlow(el: Element, usedIds: Set<string>): any | null {
 
     const name = el.getAttribute("name") || "";
     const schemas = getSchemaByType("bpmn:sequenceFlow");
-    const form: Record<string, any> = {};
+    const form: FormModel = {};
     for (const schema of schemas) {
         form[schema.field] = schema.default;
     }
@@ -337,7 +361,7 @@ function readBpmnDi(definitions: Element, _processId: string): BpmnDiPositions {
  * 将 DI 位置应用到节点上
  */
 function applyPositions(
-    nodes: any[],
+    nodes: ImportedNode[],
     di: { shapes: Map<string, { x: number; y: number; width: number; height: number }> }
 ): void {
     for (const node of nodes) {
@@ -362,7 +386,7 @@ function applyPositions(
 /**
  * 将 BPMN DI 的连线路径恢复到 LogicFlow edge.pointsList。
  */
-function applyEdgeWaypoints(edges: any[], di: BpmnDiPositions): void {
+function applyEdgeWaypoints(edges: ImportedEdge[], di: BpmnDiPositions): void {
     for (const edge of edges) {
         const waypoints = di.edges.get(edge.id);
         if (!waypoints) continue;
@@ -381,15 +405,15 @@ function applyEdgeWaypoints(edges: any[], di: BpmnDiPositions): void {
  * 图形尺寸。若直接使用原始首尾点，边虽然已经绘制出来，但箭头可能落在
  * 节点图形内部，直到移动节点触发 LogicFlow 重算后才显示。
  */
-function alignImportedEdgeEndpoints(lf: LogicFlow, importedEdges: any[]): void {
-    const graphModel = (lf as any).graphModel;
-    if (!graphModel) return;
+function alignImportedEdgeEndpoints(lf: LogicFlow, importedEdges: ImportedEdge[]): void {
+    const graphModel = lf.graphModel;
 
     const importedEdgeIds = new Set(
         importedEdges.filter(edge => Array.isArray(edge.pointsList) && edge.pointsList.length >= 2).map(edge => edge.id)
     );
 
-    for (const edgeModel of graphModel.edges ?? []) {
+    for (const rawEdgeModel of graphModel.edges) {
+        const edgeModel = rawEdgeModel as unknown as AdjustableEdgeModel;
         if (!importedEdgeIds.has(edgeModel.id)) continue;
         if (
             !edgeModel.startPoint ||
@@ -423,7 +447,7 @@ function alignImportedEdgeEndpoints(lf: LogicFlow, importedEdges: any[]): void {
 /**
  * 自动布局：简单网格排列
  */
-function autoLayout(nodes: any[]): void {
+function autoLayout(nodes: ImportedNode[]): void {
     const COLUMNS = 4;
     const COL_SPACING = 200;
     const ROW_SPACING = 120;

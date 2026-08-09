@@ -1,17 +1,8 @@
-import type { BaseNodeModel } from "@logicflow/core";
+import type { BaseNodeModel, Model } from "@logicflow/core";
 import type { NodeBehavior } from "./types";
 
-/** LogicFlow 连线校验规则类型（非公开导出，本地声明） */
-export interface ConnectRule {
-    message: string;
-    validate: (
-        source?: any,
-        target?: any,
-        sourceAnchor?: any,
-        targetAnchor?: any,
-        edgeId?: string
-    ) => boolean | undefined;
-}
+/** LogicFlow 连线校验规则类型 */
+export type ConnectRule = Model.ConnectRule;
 
 /**
  * 从节点行为规则生成 LogicFlow ConnectRule 数组
@@ -63,7 +54,7 @@ export function createSourceRules(behavior: NodeBehavior): ConnectRule[] {
             if (!source || !target) return true;
             const graphModel = source.graphModel;
             const edges = graphModel.getNodeEdges(source.id);
-            return !edges.some((e: any) => e.sourceNodeId === source.id && e.targetNodeId === target.id);
+            return !edges.some(e => e.sourceNodeId === source.id && e.targetNodeId === target.id);
         }
     });
 
@@ -131,7 +122,7 @@ function countOutgoing(node: BaseNodeModel): number {
     const graphModel = node.graphModel;
     if (!graphModel) return 0;
     const edges = graphModel.getNodeEdges(node.id);
-    return edges.filter((e: any) => e.sourceNodeId === node.id).length;
+    return edges.filter(e => e.sourceNodeId === node.id).length;
 }
 
 /**
@@ -141,5 +132,5 @@ function countIncoming(node: BaseNodeModel): number {
     const graphModel = node.graphModel;
     if (!graphModel) return 0;
     const edges = graphModel.getNodeEdges(node.id);
-    return edges.filter((e: any) => e.targetNodeId === node.id).length;
+    return edges.filter(e => e.targetNodeId === node.id).length;
 }

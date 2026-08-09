@@ -1,6 +1,7 @@
-import LogicFlow from "@logicflow/core";
+import LogicFlow, { GraphModel } from "@logicflow/core";
 import { DynamicGroupNodeModel } from "@logicflow/extension";
 import { NODE_TYPES } from "../../../../core/constants";
+import { BpmnProperties } from "../../../../core/domain-types";
 import { createConnectRules, getNodeBehavior } from "../../../../features/behaviors";
 
 /**
@@ -9,7 +10,7 @@ import { createConnectRules, getNodeBehavior } from "../../../../features/behavi
 export class SubProcessModel extends DynamicGroupNodeModel {
     static readonly type = NODE_TYPES.SUB_PROCESS;
 
-    constructor(data: any, graphModel: any) {
+    constructor(data: LogicFlow.NodeConfig, graphModel: GraphModel) {
         super(data, graphModel);
         this.width = 200;
         this.height = 160;
@@ -29,7 +30,7 @@ export class SubProcessModel extends DynamicGroupNodeModel {
         this.isAllowOutgoing = true;
 
         // 导入场景：form 数据已存在，无需重建
-        if ((data.properties as any)?.form) return;
+        if ((data.properties as BpmnProperties | undefined)?.form) return;
     }
 
     setAttributes() {

@@ -1,5 +1,6 @@
-import LogicFlow, { CircleNodeModel } from "@logicflow/core";
+import LogicFlow, { CircleNodeModel, GraphModel } from "@logicflow/core";
 import { NODE_TYPE_NAMES, NODE_TYPES } from "../../../../core/constants";
+import { BpmnProperties, FormModel, getTextValue } from "../../../../core/domain-types";
 import { Property, PropertyMethod } from "../../../../features/schema/types";
 import { StartEventSchema } from "../../../../features/schema/nodes/event/start-event";
 import { createConnectRules, getNodeBehavior } from "../../../../features/behaviors";
@@ -19,7 +20,7 @@ export class StartEventModel extends CircleNodeModel implements PropertyMethod {
         return StartEventSchema;
     }
 
-    constructor(data: any, graphModel: any) {
+    constructor(data: LogicFlow.NodeConfig, graphModel: GraphModel) {
         super(data, graphModel);
         this.r = 26;
         this.resizable = false;
@@ -36,10 +37,11 @@ export class StartEventModel extends CircleNodeModel implements PropertyMethod {
         super.initNodeData(data);
 
         // 如果导入时已经提供了 form 数据，不再重新构建
-        if ((data.properties as any)?.form) {
+        const properties = data.properties as BpmnProperties | undefined;
+        if (properties?.form) {
             data.id = data.id || BpmnIdGenerator.generate("node");
             data.properties = data.properties || {};
-            (data.properties as any).schemas = (data.properties as any).schemas || this.getSchemas();
+            (data.properties as BpmnProperties).schemas = properties.schemas || this.getSchemas();
             return;
         }
 
@@ -49,14 +51,14 @@ export class StartEventModel extends CircleNodeModel implements PropertyMethod {
 
         // form构建
         const schemas = this.getSchemas();
-        const form: { [key: string]: any } = {};
+        const form: FormModel = {};
         for (const schema of schemas) {
             if (schema.field === "id") {
                 form[schema.field] = data.id;
                 continue;
             }
             if (schema.field === "name") {
-                form[schema.field] = data.text;
+                form[schema.field] = getTextValue(data.text);
                 continue;
             }
             form[schema.field] = schema.default;

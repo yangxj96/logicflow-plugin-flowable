@@ -2,6 +2,8 @@ import { PropertyEventOptions } from "./types";
 import { getSchemaByType } from "../../features/schema";
 import { Property } from "../../features/schema/types";
 import { getProcessContext } from "../../features/context/process";
+import { BpmnProperties, FlowElementData, FormModel, getTextValue } from "../../core/domain-types";
+import type LogicFlow from "@logicflow/core";
 
 /**
  * 注册属性面板相关事件
@@ -47,7 +49,7 @@ export function registerPropertyEvents(options: PropertyEventOptions) {
     });
 
     // ===== 新增节点（DND / add）=====
-    const handleNodeAdd = ({ data }: any) => {
+    const handleNodeAdd = ({ data }: { data: LogicFlow.NodeData }) => {
         lf.selectElementById(data.id);
 
         run(() => {
@@ -77,7 +79,7 @@ export function registerPropertyEvents(options: PropertyEventOptions) {
     lf.on("node:delete", resetIfMatch);
     lf.on("edge:delete", resetIfMatch);
 
-    function resetIfMatch({ data }: any) {
+    function resetIfMatch({ data }: { data: FlowElementData }) {
         run(() => {
             if (state.currentNode.value?.id === data.id) {
                 reset();
@@ -105,18 +107,17 @@ export function registerPropertyEvents(options: PropertyEventOptions) {
  * model.getData() 返回的 properties 可能是浅拷贝——直接修改不会持久化到 model。
  * 因此通过 lf.setProperties() 将 form 写入模型，保证后续点击/导出都能读到。
  */
-function ensureAndSyncForm(lf: any, data: any, _kind: "node" | "edge") {
+function ensureAndSyncForm(lf: LogicFlow, data: FlowElementData, _kind: "node" | "edge") {
     if (!data || !data.type || !data.id) return;
 
     const schemas = getSchemaByType(data.type);
     if (!schemas || schemas.length === 0) return;
 
     // 确保 properties 存在
-    if (!data.properties) {
-        data.properties = {};
-    }
+    data.properties ??= {};
+    const properties = data.properties as BpmnProperties;
 
-    let form = data.properties.form as Record<string, any> | undefined;
+    let form = properties.form;
 
     if (!form) {
         // 首次初始化：从 schema 构建默认值
@@ -128,8 +129,7 @@ function ensureAndSyncForm(lf: any, data: any, _kind: "node" | "edge") {
                 if (schema.field === "id") {
                     form[schema.field] = data.id ?? schema.default;
                 } else if (schema.field === "name") {
-                    form[schema.field] =
-                        typeof data.text === "object" ? (data.text as any).value : (data.text ?? schema.default);
+                    form[schema.field] = getTextValue(data.text) ?? schema.default;
                 } else {
                     form[schema.field] = schema.default;
                 }
@@ -145,20 +145,20 @@ function ensureAndSyncForm(lf: any, data: any, _kind: "node" | "edge") {
     }
 
     // 挂载到当前事件 data 上供属性面板渲染
-    data.properties.form = form;
-    data.properties.schemas = schemas;
+    properties.form = form;
+    properties.schemas = schemas;
 }
 
 /**
  * 根据 schema 和当前数据构建 form 默认值
  */
-function buildFormDefaults(schemas: Property[], data: any): Record<string, any> {
-    const form: Record<string, any> = {};
+function buildFormDefaults(schemas: Property[], data: FlowElementData): FormModel {
+    const form: FormModel = {};
     for (const schema of schemas) {
         if (schema.field === "id" && data.id) {
             form[schema.field] = data.id;
         } else if (schema.field === "name" && data.text) {
-            form[schema.field] = typeof data.text === "object" ? (data.text as any).value : data.text;
+            form[schema.field] = getTextValue(data.text);
         } else {
             form[schema.field] = schema.default;
         }

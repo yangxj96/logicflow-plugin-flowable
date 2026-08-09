@@ -1,11 +1,11 @@
-import { RectNodeModel } from "@logicflow/core";
+import LogicFlow, { GraphModel, RectNodeModel } from "@logicflow/core";
 import { createConnectRules, getNodeBehavior } from "../../../features/behaviors";
 
 /**
  * 抽象的任务模型
  */
 export class TaskBaseModel extends RectNodeModel {
-    constructor(data: any, graphModel: any) {
+    constructor(data: LogicFlow.NodeConfig, graphModel: GraphModel) {
         super(data, graphModel);
 
         // BPMN UserTask 标准尺寸

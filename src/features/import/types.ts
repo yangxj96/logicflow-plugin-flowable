@@ -1,3 +1,5 @@
+import type LogicFlow from "@logicflow/core";
+
 /**
  * BPMN XML 标签名 → LogicFlow 节点类型（反向映射）
  */
@@ -30,6 +32,6 @@ export interface ImportResult {
     success: boolean;
     message: string;
     processName?: string;
-    nodes?: any[];
-    edges?: any[];
+    nodes?: LogicFlow.NodeConfig[];
+    edges?: LogicFlow.EdgeConfig[];
 }

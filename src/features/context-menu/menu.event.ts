@@ -1,5 +1,9 @@
 import { ContextMenuItem } from "./types";
 
+interface DynamicGroupExtension {
+    removeNodeFromGroup?: (payload: unknown) => void;
+}
+
 /**
  * node上下文菜单
  */
@@ -8,8 +12,10 @@ export const nodeMenu: ContextMenuItem[] = [
         key: "delete",
         label: "删除节点",
         onClick: ({ lf, data }) => {
-            const graphModel = (lf as any).graphModel;
-            const dynamicGroup = (lf as any).extensions?.dynamicGroup;
+            if (!data) return;
+            const graphModel = lf.graphModel;
+            const dynamicGroup = (lf.extension as Record<string, unknown>).dynamicGroup as
+                DynamicGroupExtension | undefined;
 
             // 临时移除 node:delete 事件监听，避免 DynamicGroup 的递归调用
             if (dynamicGroup?.removeNodeFromGroup) {
@@ -42,6 +48,7 @@ export const edgeMenu: ContextMenuItem[] = [
         key: "delete",
         label: "删除顺序流",
         onClick: ({ lf, data }) => {
+            if (!data) return;
             lf.deleteEdge(data.id);
         }
     }

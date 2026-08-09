@@ -1,4 +1,4 @@
-import LogicFlow, { CircleNodeModel } from "@logicflow/core";
+import LogicFlow, { CircleNodeModel, GraphModel } from "@logicflow/core";
 import { NODE_TYPES } from "../../../../core/constants";
 import { createConnectRules, getNodeBehavior } from "../../../../features/behaviors";
 
@@ -12,7 +12,7 @@ import { createConnectRules, getNodeBehavior } from "../../../../features/behavi
 export class EndEventModel extends CircleNodeModel {
     static readonly type = NODE_TYPES.END_EVENT;
 
-    constructor(data: any, graphModel: any) {
+    constructor(data: LogicFlow.NodeConfig, graphModel: GraphModel) {
         super(data, graphModel);
         this.r = 26;
         this.resizable = false;

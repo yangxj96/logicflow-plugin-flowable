@@ -1,5 +1,6 @@
 import { h, RectNode } from "@logicflow/core";
 import { svgToDataUri } from "../../../core/constants";
+import { getDisplayName } from "../../../core/domain-types";
 
 /**
  * 抽象的任务视图
@@ -85,7 +86,7 @@ export class TaskBaseView extends RectNode {
                     fill: "#333",
                     fontSize: 14
                 },
-                (properties as any)?.form?.name || (properties as any)?.name || text.value || ""
+                getDisplayName(properties, text.value)
             )
         ]);
     }

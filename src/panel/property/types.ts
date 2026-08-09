@@ -3,6 +3,7 @@ import { ProcessModel } from "../../features/context/types";
 import { PickerType } from "../../features/schema/types";
 import { App, ComputedRef, Ref, VNode } from "vue";
 import { FormInstance } from "element-plus";
+import type { Property } from "../../features/schema/types";
 
 /**
  * 初始化数据
@@ -67,11 +68,11 @@ export type PropertyRendererContext = {
     /**
      * 属性
      */
-    property: any;
+    property: Property;
     /**
      * 值
      */
-    value: any;
+    value: unknown;
 };
 
 /**
