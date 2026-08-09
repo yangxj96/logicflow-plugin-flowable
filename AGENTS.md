@@ -80,6 +80,5 @@ src/
 
 ### 项目内文档
 
-- `document/Plans/P-子流程标准化修复计划.md` — 子流程组件标准化修复计划
 - `README.md` — 支持的 BPMN 元素矩阵
 - `examples/` — 最小可运行示例（Vue 3 + Vite）

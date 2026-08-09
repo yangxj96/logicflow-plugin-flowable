@@ -57,9 +57,9 @@
     "peerDependencies": {
         "@logicflow/core": "^2.1.11",
         "@logicflow/extension": "^2.1.11",
-        "element-plus": "^2.13.5",
+        "element-plus": ">=2.13.2 <3",
         "preact": "^10.17.1",
-        "vue": "^3.5.30"
+        "vue": ">=3.5.28 <4"
     },
     "peerDependenciesMeta": {
         "preact": {
