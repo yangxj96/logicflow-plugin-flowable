@@ -1,84 +1,19 @@
-# AGENTS.md
+# logicflow-plugin-flowable Agent 指令
 
-## 项目概述
+## 项目边界
 
-`@yangxj96/logicflow-plugin-flowable` 是基于 [LogicFlow](https://logicflow.org) 的 **BPMN 2.0 流程建模插件**，无缝对接 [Flowable](https://www.flowable.org) 工作流引擎。
+- LogicFlow BPMN 2.0 插件，输出 ESM、CJS 和 `.d.ts`。
+- 使用 Node 24.14.0、pnpm 11.0.9 和项目已有的 tsup 配置。
+- 插件通过 `spectra-ui` 的本地 `file:` 依赖使用；修改插件并联调 Web 时需要先构建或监听构建。
 
-- 在 spectra-ui 中作为本地 `file:` 引用（`file:../logicflow-plugin-flowable`）
-- 输出：ESM + CJS + .d.ts（通过 tsup 构建）
-- 对等依赖：`@logicflow/core`、`@logicflow/extension`、`element-plus`、`vue`
+## 实现约束
 
-## 常用命令
+- 文件名使用 kebab-case；公共 API 使用 JSDoc。
+- 新增 BPMN 节点时遵循既有基类、目录和聚合器注册方式。
+- 保持插件 API 与 Flowable 映射契约；复杂节点行为读取插件领域笔记，不在本文件复制。
 
-- `pnpm run build` — 构建（tsup: ESM + CJS + .d.ts + sourcemap）
-- `pnpm run dev` — 开发监听模式
-- `pnpm run format` — Prettier 格式化
-- `pnpm run format:check` — 检查格式（CI 用）
+## 验证
 
-验证顺序：`format → build`
-
-## 工具链
-
-- Node 24.14.0, pnpm 11.0.9（通过 `mise.toml` 管理）
-- TypeScript 5.9, tsup 8.5
-- Prettier 3（4 空格缩进，双引号，分号，120 字符行宽）
-
-## 代码规范
-
-- **4 空格缩进**，禁用 Tab。双引号。分号。120 字符行宽。
-- `endOfLine: lf`。`arrowParens: avoid`。`trailingComma: none`。
-- 文件名：kebab-case（如 `task-base-model.ts`）
-- 公共 API 使用 JSDoc 注释
-
-## 项目结构
-
-```
-src/
-├── index.ts                  # 入口：导出 Flowable.Plugin
-├── core/
-│   ├── index.ts              # FlowablePlugin 类 — 初始化编排
-│   ├── constants.ts          # BPMN 节点类型字符串、显示名称、SVG 图标
-│   └── types.ts              # FlowablePluginOptions（面板容器）
-├── elements/                 # BPMN 元素（LogicFlow 自定义节点/边）
-│   ├── nodes/
-│   │   ├── events/           # 开始/结束事件
-│   │   ├── tasks/            # 用户/服务/脚本/接收任务
-│   │   ├── gateways/         # 排他/包容/并行网关
-│   │   └── subprocess/       # 嵌入式子流程/调用活动
-│   └── edges/sequence/       # 序列流
-├── panel/
-│   ├── dnd/                  # 拖拽组件面板（Vue 3）
-│   └── property/             # 属性编辑面板（Vue 3）
-├── features/
-│   ├── context/process.ts    # 流程元数据
-│   ├── context-menu/         # 右键菜单
-│   └── schema/               # 属性 schema
-└── helper/
-    └── id-generator.ts       # BPMN UUID 生成器
-```
-
-## 开发工作流
-
-### 在 spectra-ui 中调试
-
-1. 在 `logicflow-plugin-flowable/` 执行 `pnpm run dev`（监听模式，自动重新构建）
-2. 在 `spectra-ui/` 执行 `pnpm start`
-3. 修改 logicflow-plugin-flowable 源码后，构建产物会自动更新到 spectra-ui
-
-### 添加新节点
-
-1. 在 `elements/nodes/` 下创建 `model.ts`、`view.ts`、`index.ts`
-2. 继承基类（`TaskBaseModel`/`GatewayBaseModel` 等）
-3. 在 `core/constants.ts` 添加类型字符串、图标、显示名称
-4. 在对应聚合器中注册（如 `registerTaskNodes`）
-
-## 参考文档
-
-### Obsidian 知识库
-
-- [[20-前端/30-流程建模插件]] — 流程建模插件完整文档（含节点行为规则、导入导出、项目结构）
-
-### 项目内文档
-
-- `README.md` — 支持的 BPMN 元素矩阵
-- `examples/` — 最小可运行示例（Vue 3 + Vite）
+- 开发中优先执行目标测试或 `pnpm run build`。
+- 交付前按需执行 `pnpm run format:check` 和 `pnpm run build`。
+- 联调说明见 `docs/20-前端/30-流程建模插件.md`、`README.md` 和 `examples/`。
