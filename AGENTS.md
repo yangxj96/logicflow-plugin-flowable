@@ -16,4 +16,4 @@
 
 - 开发中优先执行目标测试或 `pnpm run build`。
 - 交付前按需执行 `pnpm run format:check` 和 `pnpm run build`。
-- 联调说明见 `docs/20-前端/30-流程建模插件.md`、`README.md` 和 `examples/`。
+- 联调说明见 `docs/流程设计器/01-流程建模插件.md`、`README.md` 和 `examples/`。
