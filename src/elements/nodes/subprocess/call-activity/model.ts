@@ -1,6 +1,8 @@
-import LogicFlow, { GraphModel, RectNodeModel } from "@logicflow/core";
+import { type GraphModel } from "@logicflow/core";
+import type LogicFlow from "@logicflow/core";
+import { RectNodeModel } from "@logicflow/core";
 import { NODE_TYPES } from "../../../../core/constants";
-import { BpmnProperties } from "../../../../core/domain-types";
+import { type BpmnProperties } from "../../../../core/domain-types";
 import { createConnectRules, getNodeBehavior } from "../../../../features/behaviors";
 
 /**

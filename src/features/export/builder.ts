@@ -3,9 +3,9 @@ import { BpmnIdGenerator } from "../../helper/id-generator";
 import { getProcessContext } from "../context/process";
 import { ProcessSchema } from "../schema/process";
 import { getSchemaByType } from "../schema";
-import { Property } from "../schema/types";
+import { type Property } from "../schema/types";
 import { BPMN_ELEMENT_TAGS } from "./types";
-import { BpmnProperties, FormModel, getTextValue } from "../../core/domain-types";
+import { type BpmnProperties, type FormModel, getTextValue } from "../../core/domain-types";
 
 /** BPMN 2.0 / Flowable 命名空间 */
 const BPMN_NS = "http://www.omg.org/spec/BPMN/20100524/MODEL";

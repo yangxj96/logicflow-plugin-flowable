@@ -1,9 +1,9 @@
-import LogicFlow from "@logicflow/core";
+import type LogicFlow from "@logicflow/core";
 import { ElCard, ElCollapse, ElCollapseItem } from "element-plus";
 import { computed, defineComponent, h } from "vue";
 import { useDndState } from "./dnd.state";
 import "./dnd.ui.css";
-import { DndNodeMeta } from "./types";
+import { type DndNodeMeta } from "./types";
 
 export function createDndPanel(lf: LogicFlow) {
     return defineComponent({

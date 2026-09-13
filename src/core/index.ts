@@ -2,7 +2,7 @@ import LogicFlowCore from "@logicflow/core";
 import { DynamicGroup } from "@logicflow/extension";
 import { NODE_TYPES, PLUGIN_NAME } from "./constants";
 import { registerContextMenu } from "../features/context-menu";
-import { FlowablePluginOptions } from "./types";
+import { type FlowablePluginOptions } from "./types";
 import { registerDndPanel } from "../panel/dnd";
 import { registerPropertyPanel } from "../panel/property";
 import { initProcessContext } from "../features/context/process";

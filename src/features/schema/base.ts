@@ -1,4 +1,4 @@
-import { Property } from "./types";
+import { type Property } from "./types";
 
 /**
  * 基础通用的schema属性

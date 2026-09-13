@@ -1,11 +1,11 @@
-import LogicFlow from "@logicflow/core";
+import type LogicFlow from "@logicflow/core";
 import { defineComponent, getCurrentInstance } from "vue";
 import "./property.ui.css";
 import { usePropertyPanel } from "./property.state";
 import { registerPropertyEvents } from "./property.events";
-import { PropertyEventOptions } from "./types";
+import { type PropertyEventOptions } from "./types";
 import { usePropertyRender } from "./property.render";
-import { PickerType } from "../../features/schema/types";
+import { type PickerType } from "../../features/schema/types";
 
 /**
  * 注册属性面板

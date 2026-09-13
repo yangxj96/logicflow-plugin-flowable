@@ -1,9 +1,9 @@
-import LogicFlow from "@logicflow/core";
+import type LogicFlow from "@logicflow/core";
 import { computed, ref } from "vue";
 import { getProcessContext } from "../../features/context/process";
-import { ProcessModel } from "../../features/context/types";
-import { PickerType } from "../../features/schema/types";
-import { PropertyPanelState } from "./types";
+import { type ProcessModel } from "../../features/context/types";
+import { type PickerType } from "../../features/schema/types";
+import { type PropertyPanelState } from "./types";
 import type { FormInstance } from "element-plus";
 
 /**

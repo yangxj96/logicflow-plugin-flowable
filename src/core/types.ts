@@ -1,4 +1,4 @@
-import { PickerType } from "../features/schema/types";
+import { type PickerType } from "../features/schema/types";
 
 /**
  * 插件配置

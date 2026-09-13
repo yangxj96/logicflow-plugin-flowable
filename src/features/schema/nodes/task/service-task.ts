@@ -1,6 +1,5 @@
 import { BaseSchema } from "../../base";
-import { Property } from "../../types";
-import { NODE_TYPE_NAMES, NODE_TYPES } from "../../../../core/constants";
+import { type Property } from "../../types";
 
 /**
  * 服务任务 Schema

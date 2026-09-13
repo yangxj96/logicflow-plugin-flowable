@@ -1,5 +1,5 @@
-import { App, createApp } from "vue";
-import { PropertyPanelOptions } from "./types";
+import { type App, createApp } from "vue";
+import { type PropertyPanelOptions } from "./types";
 import { createPropertyPanel } from "./property.ui";
 import { registerDefaultsRenderer } from "./renderer";
 

@@ -1,7 +1,9 @@
-import LogicFlow, { CircleNodeModel, GraphModel } from "@logicflow/core";
+import { type GraphModel } from "@logicflow/core";
+import type LogicFlow from "@logicflow/core";
+import { CircleNodeModel } from "@logicflow/core";
 import { NODE_TYPE_NAMES, NODE_TYPES } from "../../../../core/constants";
-import { BpmnProperties, FormModel, getTextValue } from "../../../../core/domain-types";
-import { Property, PropertyMethod } from "../../../../features/schema/types";
+import { type BpmnProperties, type FormModel, getTextValue } from "../../../../core/domain-types";
+import { type Property, type PropertyMethod } from "../../../../features/schema/types";
 import { StartEventSchema } from "../../../../features/schema/nodes/event/start-event";
 import { createConnectRules, getNodeBehavior } from "../../../../features/behaviors";
 import { BpmnIdGenerator } from "../../../../helper/id-generator";

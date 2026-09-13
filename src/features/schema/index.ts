@@ -1,5 +1,22 @@
-import { Property } from "./types";
+import { type Property } from "./types";
 import { NODE_TYPES } from "../../core/constants";
+
+// 静态导入用于注册表
+import { StartEventSchema } from "./nodes/event/start-event";
+import { EndEventSchema } from "./nodes/event/end-event";
+import { IntermediateCatchEventSchema } from "./nodes/event/intermediate-catch-event";
+import { IntermediateThrowEventSchema } from "./nodes/event/intermediate-throw-event";
+import { BoundaryEventSchema } from "./nodes/event/boundary-event";
+import { UserTaskSchema } from "./nodes/task/user-task";
+import { ServiceTaskSchema } from "./nodes/task/service-task";
+import { ScriptTaskSchema } from "./nodes/task/script-task";
+import { ReceiveTaskSchema } from "./nodes/task/receive-task";
+import { ExclusiveGatewaySchema } from "./nodes/gateway/exclusive-gateway";
+import { ParallelGatewaySchema } from "./nodes/gateway/parallel-gateway";
+import { InclusiveGatewaySchema } from "./nodes/gateway/inclusive-gateway";
+import { SubProcessSchema } from "./nodes/subprocess/sub-process";
+import { CallActivitySchema } from "./nodes/subprocess/call-activity";
+import { SequenceFlowSchema } from "./edges/sequence-flow";
 
 // 流程
 export { ProcessSchema } from "./process";
@@ -28,23 +45,6 @@ export { CallActivitySchema } from "./nodes/subprocess/call-activity";
 
 // 连线
 export { SequenceFlowSchema } from "./edges/sequence-flow";
-
-// 静态导入用于注册表
-import { StartEventSchema } from "./nodes/event/start-event";
-import { EndEventSchema } from "./nodes/event/end-event";
-import { IntermediateCatchEventSchema } from "./nodes/event/intermediate-catch-event";
-import { IntermediateThrowEventSchema } from "./nodes/event/intermediate-throw-event";
-import { BoundaryEventSchema } from "./nodes/event/boundary-event";
-import { UserTaskSchema } from "./nodes/task/user-task";
-import { ServiceTaskSchema } from "./nodes/task/service-task";
-import { ScriptTaskSchema } from "./nodes/task/script-task";
-import { ReceiveTaskSchema } from "./nodes/task/receive-task";
-import { ExclusiveGatewaySchema } from "./nodes/gateway/exclusive-gateway";
-import { ParallelGatewaySchema } from "./nodes/gateway/parallel-gateway";
-import { InclusiveGatewaySchema } from "./nodes/gateway/inclusive-gateway";
-import { SubProcessSchema } from "./nodes/subprocess/sub-process";
-import { CallActivitySchema } from "./nodes/subprocess/call-activity";
-import { SequenceFlowSchema } from "./edges/sequence-flow";
 
 /**
  * 节点类型 → Schema 映射表

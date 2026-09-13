@@ -1,4 +1,4 @@
-import { ContextMenuItem } from "./types";
+import { type ContextMenuItem } from "./types";
 
 interface DynamicGroupExtension {
     removeNodeFromGroup?: (payload: unknown) => void;

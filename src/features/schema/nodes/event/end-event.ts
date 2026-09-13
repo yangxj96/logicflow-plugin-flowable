@@ -1,5 +1,5 @@
 import { BaseSchema } from "../../base";
-import { Property } from "../../types";
+import { type Property } from "../../types";
 
 /**
  * 结束事件 Schema

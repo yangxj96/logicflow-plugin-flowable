@@ -1,7 +1,7 @@
-import { App, createApp } from "vue";
+import { type App, createApp } from "vue";
 import { createDndPanel } from "./dnd.ui";
 import { NODE_ICONS, NODE_TYPES } from "../../core/constants";
-import { DndNodeMeta, DndPanelOptions } from "./types";
+import { type DndNodeMeta, type DndPanelOptions } from "./types";
 
 const appMap = new WeakMap<HTMLElement, App>();
 

@@ -1,6 +1,6 @@
 import type LogicFlow from "@logicflow/core";
 import { BpmnIdGenerator } from "../../helper/id-generator";
-import { ProcessModel } from "./types";
+import { type ProcessModel } from "./types";
 
 const processContexts = new WeakMap<LogicFlow, ProcessModel>();
 

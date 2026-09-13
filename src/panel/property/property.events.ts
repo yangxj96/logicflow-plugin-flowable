@@ -1,8 +1,8 @@
-import { PropertyEventOptions } from "./types";
+import { type PropertyEventOptions } from "./types";
 import { getSchemaByType } from "../../features/schema";
-import { Property } from "../../features/schema/types";
+import { type Property } from "../../features/schema/types";
 import { getProcessContext } from "../../features/context/process";
-import { BpmnProperties, FlowElementData, FormModel, getTextValue } from "../../core/domain-types";
+import { type BpmnProperties, type FlowElementData, type FormModel, getTextValue } from "../../core/domain-types";
 import type LogicFlow from "@logicflow/core";
 
 /**
@@ -17,7 +17,7 @@ export function registerPropertyEvents(options: PropertyEventOptions) {
             state.mode.value = "node";
             state.currentNode.value = data;
             state.currentEdge.value = undefined;
-            ensureAndSyncForm(lf, data, "node");
+            ensureAndSyncForm(lf, data);
         });
     });
 
@@ -27,7 +27,7 @@ export function registerPropertyEvents(options: PropertyEventOptions) {
             state.mode.value = "edge";
             state.currentNode.value = undefined;
             state.currentEdge.value = data;
-            ensureAndSyncForm(lf, data, "edge");
+            ensureAndSyncForm(lf, data);
         });
     });
 
@@ -56,7 +56,7 @@ export function registerPropertyEvents(options: PropertyEventOptions) {
             state.mode.value = "node";
             state.currentNode.value = data;
             state.currentEdge.value = undefined;
-            ensureAndSyncForm(lf, data, "node");
+            ensureAndSyncForm(lf, data);
         });
     };
 
@@ -71,7 +71,7 @@ export function registerPropertyEvents(options: PropertyEventOptions) {
             state.mode.value = "edge";
             state.currentNode.value = undefined;
             state.currentEdge.value = data;
-            ensureAndSyncForm(lf, data, "edge");
+            ensureAndSyncForm(lf, data);
         });
     });
 
@@ -97,7 +97,11 @@ export function registerPropertyEvents(options: PropertyEventOptions) {
     }
 
     function run(fn: () => void) {
-        app?.runWithContext ? app.runWithContext(fn) : fn();
+        if (app?.runWithContext) {
+            app.runWithContext(fn);
+        } else {
+            fn();
+        }
     }
 }
 
@@ -107,7 +111,7 @@ export function registerPropertyEvents(options: PropertyEventOptions) {
  * model.getData() 返回的 properties 可能是浅拷贝——直接修改不会持久化到 model。
  * 因此通过 lf.setProperties() 将 form 写入模型，保证后续点击/导出都能读到。
  */
-function ensureAndSyncForm(lf: LogicFlow, data: FlowElementData, _kind: "node" | "edge") {
+function ensureAndSyncForm(lf: LogicFlow, data: FlowElementData) {
     if (!data || !data.type || !data.id) return;
 
     const schemas = getSchemaByType(data.type);

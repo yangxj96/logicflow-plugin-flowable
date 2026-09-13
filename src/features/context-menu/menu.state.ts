@@ -1,5 +1,5 @@
 import { reactive } from "vue";
-import { ContextMenuItem, ContextMenuState, MenuContext } from "./types";
+import { type ContextMenuItem, type ContextMenuState, type MenuContext } from "./types";
 
 /**
  * 上下文菜单状态

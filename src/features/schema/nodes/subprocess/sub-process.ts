@@ -1,5 +1,5 @@
 import { BaseSchema } from "../../base";
-import { Property } from "../../types";
+import { type Property } from "../../types";
 
 /**
  * 嵌入式子流程 Schema

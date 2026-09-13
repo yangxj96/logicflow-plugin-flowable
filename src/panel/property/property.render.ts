@@ -1,4 +1,4 @@
-import { computed, h, VNode } from "vue";
+import { computed, h, type VNode } from "vue";
 import {
     ElButton,
     ElCard,
@@ -13,11 +13,10 @@ import {
 } from "element-plus";
 import { NODE_TYPE_NAMES } from "../../core/constants";
 import { getProcessContext } from "../../features/context/process";
-import { getSchemaByType } from "../../features/schema";
-import { ProcessSchema } from "../../features/schema";
-import { PickerRequestPayload, Property, PropertyComponent } from "../../features/schema/types";
-import { PropertyPanelState } from "./types";
-import { BpmnProperties, FormModel } from "../../core/domain-types";
+import { getSchemaByType, ProcessSchema } from "../../features/schema";
+import { type PickerRequestPayload, type Property, type PropertyComponent } from "../../features/schema/types";
+import { type PropertyPanelState } from "./types";
+import { type BpmnProperties, type FormModel } from "../../core/domain-types";
 
 /**
  * 创建属性面板渲染上下文（在 setup 中调用，创建 computed 等响应式对象）
@@ -187,7 +186,7 @@ function renderControl(
         }
 
         // name 字段：立即更新节点显示文本（所有节点类型通用）
-        if (field === "name" && state.mode.value !== "process") {
+        if (field === "name") {
             const targetId = state.mode.value === "node" ? state.currentNode.value?.id : state.currentEdge.value?.id;
             if (targetId) {
                 try {

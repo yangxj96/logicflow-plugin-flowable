@@ -55,8 +55,8 @@
         "format:check": "prettier --check ./src ./scripts tsup.config.ts"
     },
     "peerDependencies": {
-        "@logicflow/core": "^2.1.11",
-        "@logicflow/extension": "^2.1.11",
+        "@logicflow/core": "^2.2.4",
+        "@logicflow/extension": "^2.3.0",
         "element-plus": ">=2.13.2 <3",
         "preact": "^10.17.1",
         "vue": ">=3.5.28 <4"
@@ -67,8 +67,8 @@
         }
     },
     "devDependencies": {
-        "@logicflow/core": "^2.1.11",
-        "@logicflow/extension": "^2.1.11",
+        "@logicflow/core": "2.2.4",
+        "@logicflow/extension": "2.3.0",
         "nanoid": "3.3.17",
         "postcss": "8.5.23",
         "preact": "^10.17.1",

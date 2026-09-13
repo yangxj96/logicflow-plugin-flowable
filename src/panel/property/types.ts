@@ -1,9 +1,8 @@
 import type { LogicFlow } from "@logicflow/core";
-import { ProcessModel } from "../../features/context/types";
-import { PickerType } from "../../features/schema/types";
-import { App, ComputedRef, Ref, VNode } from "vue";
-import { FormInstance } from "element-plus";
-import type { Property } from "../../features/schema/types";
+import { type ProcessModel } from "../../features/context/types";
+import { type PickerType, type Property } from "../../features/schema/types";
+import { type App, type ComputedRef, type Ref, type VNode } from "vue";
+import { type FormInstance } from "element-plus";
 
 /**
  * 初始化数据

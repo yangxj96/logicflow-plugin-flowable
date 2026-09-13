@@ -1,4 +1,5 @@
-import { Component, DiamondNode, h } from "@logicflow/core";
+import { DiamondNode, h } from "@logicflow/core";
+import type { ComponentChildren } from "preact";
 
 /**
  * 并行网关视图
@@ -14,7 +15,7 @@ export abstract class GatewayBaseView extends DiamondNode {
         size: number,
         strokeColor: string,
         strokeWidth: number
-    ): Component;
+    ): ComponentChildren;
 
     getShape() {
         const { x, y, width, height, isSelected } = this.props.model;

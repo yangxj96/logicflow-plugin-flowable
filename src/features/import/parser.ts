@@ -1,10 +1,9 @@
 import type LogicFlow from "@logicflow/core";
 import { getSchemaByType } from "../schema";
-import { Property } from "../schema/types";
-import { XML_TAG_TO_TYPE, VALID_FLOW_ELEMENTS, ImportResult } from "./types";
+import { XML_TAG_TO_TYPE, VALID_FLOW_ELEMENTS, type ImportResult } from "./types";
 import { getProcessContext } from "../context/process";
 import { BpmnIdGenerator } from "../../helper/id-generator";
-import { BpmnProperties, FormModel } from "../../core/domain-types";
+import { type BpmnProperties, type FormModel } from "../../core/domain-types";
 
 interface ImportedNode extends Omit<LogicFlow.NodeConfig<BpmnProperties>, "x" | "y"> {
     id: string;
@@ -28,9 +27,6 @@ interface AdjustableEdgeModel {
     getPath?: (points: BpmnPoint[]) => string;
     updateAttributes: (attributes: { pointsList: BpmnPoint[]; points: string }) => void;
 }
-
-/** BPMN 命名空间 */
-const BPMN_NS = "http://www.omg.org/spec/BPMN/20100524/MODEL";
 
 /**
  * 从 BPMN XML 字符串导入流程图
@@ -104,7 +100,7 @@ export function fromBpmnXml(xmlString: string, lf: LogicFlow): ImportResult {
     }
 
     // 6. 读取 BPMN DI 位置信息，有则使用，无则自动布局
-    const diPositions = readBpmnDi(definitions, processId);
+    const diPositions = readBpmnDi(definitions);
     if (diPositions.shapes.size > 0) {
         applyPositions(nodes, diPositions);
     } else {
@@ -143,6 +139,7 @@ function dedupeAttrs(xml: string): string {
         let m: RegExpExecArray | null;
         while ((m = attrRegex.exec(attrsStr)) !== null) {
             const name = m[1];
+            if (!name) continue;
             if (!seen.has(name)) {
                 seen.add(name);
                 unique.push(m[0]);
@@ -180,7 +177,7 @@ function parseFlowNode(el: Element, tagName: string, usedIds: Set<string>): Impo
     usedIds.add(id);
 
     // 获取 name
-    let name = el.getAttribute("name") || "";
+    const name = el.getAttribute("name") || "";
 
     // 构建 form 数据
     const schemas = getSchemaByType(type);
@@ -307,7 +304,7 @@ interface BpmnDiPositions {
  * BPMNEdge 的 bpmnElement 指向 process 中的 sequenceFlow id，
  * di:waypoint 则描述了编辑器保存的实际折线路径。
  */
-function readBpmnDi(definitions: Element, _processId: string): BpmnDiPositions {
+function readBpmnDi(definitions: Element): BpmnDiPositions {
     const shapes = new Map<string, { x: number; y: number; width: number; height: number }>();
     const edges = new Map<string, BpmnPoint[]>();
 

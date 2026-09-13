@@ -1,4 +1,4 @@
-import { PropertyRenderer } from "../types";
+import { type PropertyRenderer } from "../types";
 import { registerTextRenderer } from "./defaults/text";
 
 /**

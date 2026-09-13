@@ -1,4 +1,4 @@
-import { Property } from "./types";
+import { type Property } from "./types";
 
 /**
  * 流程级别属性 Schema
