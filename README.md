@@ -165,7 +165,7 @@ interface FlowablePluginOptions {
 
 | 类型        | 用途                    |
 | ----------- | ----------------------- |
-| `form`      | Flowable 表单或表单定义 |
+| `form`      | Flowable 原生 `formKey` |
 | `user`      | 用户、指定人、候选人    |
 | `group`     | 用户组、候选组          |
 | `javaClass` | 服务任务的 Java 实现类  |
