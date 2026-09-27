@@ -3,7 +3,7 @@
 ## 项目边界
 
 - LogicFlow BPMN 2.0 插件，输出 ESM、CJS 和 `.d.ts`。
-- 使用 Node 24.14.0、pnpm 11.0.9 和项目已有的 tsup 配置。
+- 使用 Node 24.14.0、pnpm 12.6.0 和项目已有的 tsup 配置。
 - 插件通过 `spectra-ui` 的本地 `file:` 依赖使用；修改插件并联调 Web 时需要先构建或监听构建。
 
 ## 实现约束
@@ -14,6 +14,5 @@
 
 ## 验证
 
-- 开发中优先执行目标测试或 `pnpm run build`。
-- 交付前按需执行 `pnpm run format:check` 和 `pnpm run build`。
+- 开发中优先执行目标测试或构建；交付前按常见命令文档执行完整门禁。
 - 联调说明见 `docs/流程设计器/01-流程建模插件.md`、`README.md` 和 `examples/`。
