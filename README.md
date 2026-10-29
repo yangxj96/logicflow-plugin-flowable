@@ -2,7 +2,7 @@
 
 > 基于 LogicFlow 的 BPMN 2.0 流程建模插件，提供 Flowable 常用节点、拖拽面板、属性面板以及 BPMN XML 导入导出能力。
 
-当前版本：`0.1.1`
+当前版本：`0.1.2`
 
 ## 特性
 
@@ -414,9 +414,9 @@ pnpm dev
 
 ## 版本和变更记录
 
-- 当前版本：`0.1.1`
+- 当前版本：`0.1.2`
 - 变更记录：[CHANGELOG.md](./CHANGELOG.md)
-- 完整变更对比：[v0.1.0...v0.1.1](https://github.com/yangxj96/logicflow-plugin-flowable/compare/v0.1.0...v0.1.1)
+- 完整变更对比：[v0.1.0...v0.1.2](https://github.com/yangxj96/logicflow-plugin-flowable/compare/v0.1.0...v0.1.2)
 
 ## 相关链接
 
