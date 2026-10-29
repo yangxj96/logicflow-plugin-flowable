@@ -6,25 +6,41 @@ import { type DndNodeMeta, type DndPanelOptions } from "./types";
 const appMap = new WeakMap<HTMLElement, App>();
 
 /**
+ * DND 面板句柄
+ */
+export interface DndPanelHandle {
+    /**
+     * 释放 DND 面板
+     */
+    dispose: () => void;
+}
+
+/**
  * 注册DND面板
  * @param lf Logicflow实例
  * @param container 容器
  */
-export function registerDndPanel({ lf, container }: DndPanelOptions): () => void {
-    if (!container) return () => {};
+export function registerDndPanel({ lf, container }: DndPanelOptions): DndPanelHandle {
+    if (!container) return { dispose: () => {} };
 
     if (appMap.has(container)) {
-        return () => {};
+        return { dispose: () => {} };
     }
 
+    let disposed = false;
     const app = createApp(createDndPanel(lf));
     app.mount(container);
 
+    const dispose = () => {
+        if (disposed) return;
+        disposed = true;
+        app.unmount();
+        appMap.delete(container);
+    };
+
     appMap.set(container, app);
 
-    return () => {
-        app.unmount();
-    };
+    return { dispose };
 }
 
 /**

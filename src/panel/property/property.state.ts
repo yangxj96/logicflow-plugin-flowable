@@ -4,6 +4,7 @@ import { getProcessContext } from "../../features/context/process";
 import { type ProcessModel } from "../../features/context/types";
 import { type PickerType } from "../../features/schema/types";
 import { type PropertyPanelState } from "./types";
+import { createPickerRequestGuard, getPropertyTargetKey } from "./picker-request";
 import type { FormInstance } from "element-plus";
 
 /**
@@ -24,6 +25,17 @@ export function usePropertyPanel(lf: LogicFlow, pickers: PickerType[]): Property
     const currentNode = ref<LogicFlow.NodeData | undefined>(undefined);
     // 当前线
     const currentEdge = ref<LogicFlow.EdgeData | undefined>(undefined);
+    // 面板是否已销毁
+    const disposed = ref(false);
+
+    const pickerGuard = createPickerRequestGuard({
+        isDisposed: () => disposed.value,
+        currentTargetKey: () => {
+            const nodeId = mode.value === "node" ? currentNode.value?.id : undefined;
+            const edgeId = mode.value === "edge" ? currentEdge.value?.id : undefined;
+            return getPropertyTargetKey(mode.value, nodeId, edgeId).key;
+        }
+    });
 
     /**
      * 表单 key，用于在切换选中元素时强制重建表单
@@ -47,6 +59,8 @@ export function usePropertyPanel(lf: LogicFlow, pickers: PickerType[]): Property
         currentNode,
         currentEdge,
         formKey,
-        pickers
+        pickers,
+        disposed,
+        pickerGuard
     };
 }

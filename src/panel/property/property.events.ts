@@ -8,50 +8,12 @@ import type LogicFlow from "@logicflow/core";
 /**
  * 注册属性面板相关事件
  */
-export function registerPropertyEvents(options: PropertyEventOptions) {
+export function registerPropertyEvents(options: PropertyEventOptions): () => void {
     const { lf, app, state } = options;
 
     // ===== 节点点击 =====
-    lf.on("node:click", ({ data }) => {
-        run(() => {
-            state.mode.value = "node";
-            state.currentNode.value = data;
-            state.currentEdge.value = undefined;
-            ensureAndSyncForm(lf, data);
-        });
-    });
-
-    // ===== 边点击 =====
-    lf.on("edge:click", ({ data }) => {
-        run(() => {
-            state.mode.value = "edge";
-            state.currentNode.value = undefined;
-            state.currentEdge.value = data;
-            ensureAndSyncForm(lf, data);
-        });
-    });
-
-    // ===== 画布点击 =====
-    lf.on("blank:click", () => {
-        run(() => {
-            state.mode.value = "process";
-            state.currentNode.value = undefined;
-            state.currentEdge.value = undefined;
-        });
-    });
-
-    // 流程 XML 导入后刷新流程属性面板。
-    // 导入逻辑更新的是 LogicFlow 上的原始上下文对象，不能依赖 Vue 自动追踪该变更。
-    lf.on("process:change", () => {
-        run(() => {
-            state.process.value = { ...getProcessContext(lf) };
-        });
-    });
-
-    // ===== 新增节点（DND / add）=====
-    const handleNodeAdd = ({ data }: { data: LogicFlow.NodeData }) => {
-        lf.selectElementById(data.id);
-
+    const handleNodeClick = ({ data }: { data: LogicFlow.NodeData }) => {
+        state.pickerGuard.invalidateAll();
         run(() => {
             state.mode.value = "node";
             state.currentNode.value = data;
@@ -60,26 +22,64 @@ export function registerPropertyEvents(options: PropertyEventOptions) {
         });
     };
 
-    lf.on("node:add", handleNodeAdd);
-    lf.on("node:dnd-add", handleNodeAdd);
-
-    // ===== 新增边 =====
-    lf.on("edge:add", ({ data }) => {
-        lf.selectElementById(data.id);
-
+    // ===== 边点击 =====
+    const handleEdgeClick = ({ data }: { data: LogicFlow.EdgeData }) => {
+        state.pickerGuard.invalidateAll();
         run(() => {
             state.mode.value = "edge";
             state.currentNode.value = undefined;
             state.currentEdge.value = data;
             ensureAndSyncForm(lf, data);
         });
-    });
+    };
+
+    // ===== 画布点击 =====
+    const handleBlankClick = () => {
+        state.pickerGuard.invalidateAll();
+        run(() => {
+            state.mode.value = "process";
+            state.currentNode.value = undefined;
+            state.currentEdge.value = undefined;
+        });
+    };
+
+    // 流程 XML 导入后刷新流程属性面板。
+    // 导入逻辑更新的是 LogicFlow 上的原始上下文对象，不能依赖 Vue 自动追踪该变更。
+    const handleProcessChange = () => {
+        run(() => {
+            state.process.value = { ...getProcessContext(lf) };
+        });
+    };
+
+    // ===== 新增节点（DND / add）=====
+    const handleNodeAdd = ({ data }: { data: LogicFlow.NodeData }) => {
+        lf.selectElementById(data.id);
+
+        state.pickerGuard.invalidateAll();
+        run(() => {
+            state.mode.value = "node";
+            state.currentNode.value = data;
+            state.currentEdge.value = undefined;
+            ensureAndSyncForm(lf, data);
+        });
+    };
+
+    // ===== 新增边 =====
+    const handleEdgeAdd = ({ data }: { data: LogicFlow.EdgeData }) => {
+        lf.selectElementById(data.id);
+
+        state.pickerGuard.invalidateAll();
+        run(() => {
+            state.mode.value = "edge";
+            state.currentNode.value = undefined;
+            state.currentEdge.value = data;
+            ensureAndSyncForm(lf, data);
+        });
+    };
 
     // ===== 删除时重置 =====
-    lf.on("node:delete", resetIfMatch);
-    lf.on("edge:delete", resetIfMatch);
-
-    function resetIfMatch({ data }: { data: FlowElementData }) {
+    const handleDelete = ({ data }: { data: FlowElementData }) => {
+        state.pickerGuard.invalidateAll();
         run(() => {
             if (state.currentNode.value?.id === data.id) {
                 reset();
@@ -88,7 +88,7 @@ export function registerPropertyEvents(options: PropertyEventOptions) {
                 reset();
             }
         });
-    }
+    };
 
     function reset() {
         state.mode.value = "process";
@@ -103,6 +103,29 @@ export function registerPropertyEvents(options: PropertyEventOptions) {
             fn();
         }
     }
+
+    lf.on("node:click", handleNodeClick);
+    lf.on("edge:click", handleEdgeClick);
+    lf.on("blank:click", handleBlankClick);
+    lf.on("process:change", handleProcessChange);
+    lf.on("node:add", handleNodeAdd);
+    lf.on("node:dnd-add", handleNodeAdd);
+    lf.on("edge:add", handleEdgeAdd);
+    lf.on("node:delete", handleDelete);
+    lf.on("edge:delete", handleDelete);
+
+    return () => {
+        state.pickerGuard.invalidateAll();
+        lf.off("node:click", handleNodeClick);
+        lf.off("edge:click", handleEdgeClick);
+        lf.off("blank:click", handleBlankClick);
+        lf.off("process:change", handleProcessChange);
+        lf.off("node:add", handleNodeAdd);
+        lf.off("node:dnd-add", handleNodeAdd);
+        lf.off("edge:add", handleEdgeAdd);
+        lf.off("node:delete", handleDelete);
+        lf.off("edge:delete", handleDelete);
+    };
 }
 
 /**

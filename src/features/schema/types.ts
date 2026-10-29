@@ -24,8 +24,12 @@ export interface PickerRequestPayload {
     nodeId?: string;
     /** 节点类型 */
     nodeType?: string;
+    /** 请求序号，同一目标只接受最新一次请求 */
+    requestId: number;
     /** 回填回调（value 存入 BPMN，label 用于面板显示） */
     resolve: (value: string, label?: string) => void;
+    /** 取消请求，关闭弹框或切换目标时调用 */
+    cancel: () => void;
 }
 
 /**

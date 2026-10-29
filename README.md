@@ -187,7 +187,11 @@ interface PickerRequestPayload {
     multiple: boolean;
     nodeId?: string;
     nodeType?: string;
+    /** 请求序号，同一目标只接受最新一次请求 */
+    requestId: number;
     resolve: (value: string, label?: string) => void;
+    /** 关闭弹框或切换目标时调用，迟到 resolve 将被丢弃 */
+    cancel: () => void;
 }
 ```
 
@@ -214,12 +218,18 @@ lf.on("property:picker", (payload: PickerRequestPayload) => {
 
             // value 会写入 BPMN 属性，label 只用于属性面板展示。
             payload.resolve(values, labels);
+        },
+        onCancel() {
+            // 关闭弹框或切换目标时调用，插件会丢弃迟到的 resolve。
+            payload.cancel();
         }
     });
 });
 ```
 
 对于多选 Picker，使用逗号分隔的字符串回填多个值和显示名称。单选 Picker 只需要回填一个元素即可。
+
+宿主应在路由离开或设计器销毁时调用 `lf.destroy()`。LogicFlow 会调用插件实例的 `destroy()`，统一释放属性面板、DND 面板、事件监听、Picker 请求和防抖定时器；`Flowable.toBpmnXml(lf)` 会先同步属性面板待写入的表单，保证快速编辑后立即导出读取到最新值。
 
 内置 schema 中的 Picker 使用位置如下：
 

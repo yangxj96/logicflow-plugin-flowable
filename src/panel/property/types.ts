@@ -3,6 +3,7 @@ import { type ProcessModel } from "../../features/context/types";
 import { type PickerType, type Property } from "../../features/schema/types";
 import { type App, type ComputedRef, type Ref, type VNode } from "vue";
 import { type FormInstance } from "element-plus";
+import { type PickerRequestGuard } from "./picker-request";
 
 /**
  * 初始化数据
@@ -49,6 +50,29 @@ export interface PropertyPanelState {
      * 使用方已实现的选择器类型
      */
     pickers: PickerType[];
+    /**
+     * 面板是否已销毁
+     */
+    disposed: Ref<boolean>;
+    /**
+     * Picker 请求守卫
+     */
+    pickerGuard: PickerRequestGuard;
+}
+
+/**
+ * 属性面板控制器
+ */
+export interface PropertyPanelControl {
+    /**
+     * 立即写入待处理表单
+     */
+    flush: () => void;
+
+    /**
+     * 释放事件、Picker 和定时器
+     */
+    dispose: () => void;
 }
 
 /**

@@ -17,23 +17,13 @@ import { getSchemaByType, ProcessSchema } from "../../features/schema";
 import { type PickerRequestPayload, type Property, type PropertyComponent } from "../../features/schema/types";
 import { type PropertyPanelState } from "./types";
 import { type BpmnProperties, type FormModel } from "../../core/domain-types";
+import { createFormSync, type FormSyncController } from "./form-sync";
+import { getPropertyTargetKey } from "./picker-request";
 
-/**
- * 创建属性面板渲染上下文（在 setup 中调用，创建 computed 等响应式对象）
- */
-/**
- * 防抖持久化 form 到模型
- */
-function createFormSync(state: PropertyPanelState) {
-    let timer: ReturnType<typeof setTimeout> | null = null;
-
-    return function syncForm(model: FormModel) {
-        if (state.mode.value === "process") return;
-        const targetId = state.mode.value === "node" ? state.currentNode.value?.id : state.currentEdge.value?.id;
-        if (!targetId) return;
-
-        if (timer) clearTimeout(timer);
-        timer = setTimeout(() => {
+export function usePropertyRender(state: PropertyPanelState) {
+    const syncForm = createFormSync({
+        isDisposed: () => state.disposed.value,
+        write: (targetId, model) => {
             try {
                 state.lf.setProperties(targetId, {
                     form: { ...model },
@@ -42,12 +32,8 @@ function createFormSync(state: PropertyPanelState) {
             } catch {
                 // 忽略
             }
-        }, 200);
-    };
-}
-
-export function usePropertyRender(state: PropertyPanelState) {
-    const syncForm = createFormSync(state);
+        }
+    });
     // 面板标题
     const title = computed(() => {
         const { mode, currentNode, currentEdge } = state;
@@ -126,7 +112,7 @@ export function usePropertyRender(state: PropertyPanelState) {
         );
     }
 
-    return { render };
+    return { render, syncForm };
 }
 
 /**
@@ -136,7 +122,7 @@ function renderFormItem(
     schema: Property,
     model: FormModel,
     state: PropertyPanelState,
-    syncForm: (m: FormModel) => void
+    syncForm: FormSyncController
 ): VNode {
     const field = schema.field;
 
@@ -167,10 +153,16 @@ function renderControl(
     schema: Property,
     model: FormModel,
     state: PropertyPanelState,
-    syncForm: (m: FormModel) => void
+    syncForm: FormSyncController
 ): VNode {
     const field = schema.field;
     const component = schema.component as PropertyComponent;
+
+    const currentTargetId = () => {
+        if (state.mode.value === "node") return state.currentNode.value?.id;
+        if (state.mode.value === "edge") return state.currentEdge.value?.id;
+        return undefined;
+    };
 
     /**
      * 表单值更新回调 — 更新内存 form、同步节点文本、防抖持久化到模型
@@ -185,19 +177,19 @@ function renderControl(
             return;
         }
 
+        const targetId = currentTargetId();
+        if (!targetId) return;
+
         // name 字段：立即更新节点显示文本（所有节点类型通用）
         if (field === "name") {
-            const targetId = state.mode.value === "node" ? state.currentNode.value?.id : state.currentEdge.value?.id;
-            if (targetId) {
-                try {
-                    state.lf.updateText(targetId, String(val ?? ""));
-                } catch {
-                    // 忽略
-                }
+            try {
+                state.lf.updateText(targetId, String(val ?? ""));
+            } catch {
+                // 忽略
             }
         }
 
-        syncForm(model);
+        syncForm.sync(model, targetId);
     }
 
     switch (component) {
@@ -263,17 +255,26 @@ function renderControl(
             const multiple = schema.pickerMultiple ?? false;
 
             function onPick() {
+                const nodeId = state.currentNode.value?.id;
+                const request = state.pickerGuard.begin(
+                    getPropertyTargetKey(state.mode.value, nodeId, state.currentEdge.value?.id)
+                );
+
                 const payload: PickerRequestPayload = {
                     pickerType: schema.pickerType!,
                     field,
                     currentValue: String(model[field] ?? ""),
                     multiple,
-                    nodeId: state.currentNode.value?.id,
+                    nodeId,
                     nodeType: state.currentNode.value?.type,
+                    requestId: request.requestId,
                     resolve: (value: string, label?: string) => {
+                        if (!request.isActive()) return;
+                        request.complete();
                         model[labelField] = label ?? value;
                         onUpdate(value);
-                    }
+                    },
+                    cancel: () => request.cancel()
                 };
                 state.lf.emit("property:picker", payload);
             }
@@ -292,13 +293,15 @@ function renderControl(
                 l.splice(index, 1);
                 model[field] = v.join(",");
                 model[labelField] = l.join(",");
-                syncForm(model);
+                const targetId = currentTargetId();
+                if (targetId) syncForm.sync(model, targetId);
             }
 
             function clearAll() {
                 model[field] = "";
                 model[labelField] = "";
-                syncForm(model);
+                const targetId = currentTargetId();
+                if (targetId) syncForm.sync(model, targetId);
             }
 
             const placeholder = h("span", { class: "lf-picker-placeholder" }, `请选择${schema.label}`);

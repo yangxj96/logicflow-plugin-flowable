@@ -229,6 +229,10 @@ function getFormData(data: LogicFlow.NodeData | LogicFlow.EdgeData, schemas: Pro
  * 从 LogicFlow 实例导出 BPMN 2.0 XML
  */
 export function toBpmnXml(lf: LogicFlow): string {
+    // 先同步属性面板的防抖编辑，保证“编辑后立即导出”读取到最新值
+    const flowable = (lf as LogicFlow & { extension?: { flowable?: { flush?: () => void } } }).extension?.flowable;
+    flowable?.flush?.();
+
     // 直接从 graphModel 的 model 实例获取最新数据（包含用户通过属性面板修改的 properties.form）
     const graphModel = lf.graphModel;
     const nodes = graphModel.nodes.map(model => model.getData());

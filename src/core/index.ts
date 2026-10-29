@@ -3,8 +3,8 @@ import { DynamicGroup } from "@logicflow/extension";
 import { NODE_TYPES, PLUGIN_NAME } from "./constants";
 import { registerContextMenu } from "../features/context-menu";
 import { type FlowablePluginOptions } from "./types";
-import { registerDndPanel } from "../panel/dnd";
-import { registerPropertyPanel } from "../panel/property";
+import { registerDndPanel, type DndPanelHandle } from "../panel/dnd";
+import { registerPropertyPanel, type PropertyPanelHandle } from "../panel/property";
 import { initProcessContext } from "../features/context/process";
 import { initElements } from "../elements";
 
@@ -75,6 +75,26 @@ export default class FlowablePlugin {
     private dynamicGroupInstance?: DynamicGroup;
 
     /**
+     * DND 面板句柄
+     */
+    private dndPanel?: DndPanelHandle;
+
+    /**
+     * 属性面板句柄
+     */
+    private propertyPanel?: PropertyPanelHandle;
+
+    /**
+     * 面板是否已经初始化
+     */
+    private panelsInitialized = false;
+
+    /**
+     * 插件是否已销毁
+     */
+    private destroyed = false;
+
+    /**
      * 注册插件能力
      */
     private initPlugins() {
@@ -113,13 +133,18 @@ export default class FlowablePlugin {
      */
     private bindEvents() {
         this.lf.on("graph:rendered", this.onGraphRendered);
-
-        // 连线被拒绝时的提示
-        this.lf.on("connection:not-allowed", ({ data, msg }) => {
-            const name = data?.text?.value ?? data?.text ?? data?.type ?? "节点";
-            console.warn(`[flowable] 连线到 "${name}" 被拒绝: ${msg}`);
-        });
+        this.lf.on("connection:not-allowed", this.onConnectionNotAllowed);
     }
+
+    /**
+     * 连线被拒绝时的提示
+     */
+    private onConnectionNotAllowed = ({ data, msg }: { data?: { text?: unknown; type?: string }; msg?: string }) => {
+        const text = data?.text;
+        const name =
+            typeof text === "string" ? text : ((text as { value?: string } | undefined)?.value ?? data?.type ?? "节点");
+        console.warn(`[flowable] 连线到 "${name}" 被拒绝: ${msg}`);
+    };
 
     /**
      * 渲染完成
@@ -133,25 +158,60 @@ export default class FlowablePlugin {
      * @private
      */
     private initPanels() {
+        if (this.destroyed || this.panelsInitialized) return;
+
         const { panel } = this.options;
 
         if (!panel) return;
 
         // DND面板
         if (panel.dnd) {
-            registerDndPanel({
+            this.dndPanel = registerDndPanel({
                 lf: this.lf,
                 container: panel.dnd
             });
         }
         // 属性面板
         if (panel.property) {
-            registerPropertyPanel({
+            this.propertyPanel = registerPropertyPanel({
                 lf: this.lf,
                 container: panel.property,
                 pickers: this.options.pickers
             });
         }
+
+        this.panelsInitialized = true;
+    }
+
+    /**
+     * 同步待写入的表单，导出前调用
+     */
+    flush() {
+        if (this.destroyed) return;
+        this.propertyPanel?.flush();
+    }
+
+    /**
+     * 释放插件资源，由 LogicFlow.destroy 调用
+     */
+    destroy() {
+        if (this.destroyed) return;
+        this.destroyed = true;
+
+        this.propertyPanel?.dispose();
+        this.propertyPanel = undefined;
+        this.dndPanel?.dispose();
+        this.dndPanel = undefined;
+
+        try {
+            this.dynamicGroupInstance?.destroy();
+        } catch {
+            // DynamicGroup 可能未安装
+        }
+        this.dynamicGroupInstance = undefined;
+
+        this.lf.off("graph:rendered", this.onGraphRendered);
+        this.lf.off("connection:not-allowed", this.onConnectionNotAllowed);
     }
 
     /**
