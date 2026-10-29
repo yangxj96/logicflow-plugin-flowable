@@ -423,7 +423,7 @@ pnpm dev
 - [LogicFlow](https://logicflow.org/)
 - [Flowable](https://www.flowable.org/)
 - [GitHub 仓库](https://github.com/yangxj96/logicflow-plugin-flowable)
-- [Spectra 流程建模文档](https://github.com/yangxj96/spectra-docs/blob/master/docs/流程设计器/01-流程建模插件.md)
+- [Spectra 流程建模文档](https://github.com/yangxj96/spectra/blob/master/docs/流程设计器/01-流程建模插件.md)
 
 ## 许可证
 
